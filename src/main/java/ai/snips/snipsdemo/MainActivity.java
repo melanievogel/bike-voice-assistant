@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             // a dir where the assistant models was unziped. It should contain the folders
             // custom_asr, custom_dialogue, custom_hotword and nlu_engine
             File assistantDir = new File(Environment.getExternalStorageDirectory()
-                    .toString(), "snips_android_assistant");
+                    .toString(), "snips_android_assistant_j");
 
             client = new SnipsPlatformClient.Builder(assistantDir)
                     .enableDialogue(true) // defaults to true

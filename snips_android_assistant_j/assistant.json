@@ -1,0 +1,44 @@
+{
+  "id" : "proj_3m9Q4ngrnKx",
+  "name" : "Harald",
+  "intents" : [ {
+    "id" : "melanievogel:AskForMountain",
+    "type" : "registry",
+    "version" : "0.1.0",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "hill",
+      "id" : "Q2PQi6ALh",
+      "entityId" : "entity_g5mMMY4zxk7",
+      "missingQuestion" : "",
+      "required" : false
+    }, {
+      "name" : "distance",
+      "id" : "brSF0aLWs",
+      "entityId" : "entity_g5mMMY4zxk7",
+      "missingQuestion" : "",
+      "required" : false
+    }, {
+      "name" : "number",
+      "id" : "B3kaOEph-",
+      "entityId" : "snips/number",
+      "missingQuestion" : "",
+      "required" : false
+    } ],
+    "name" : "AskForMountain"
+  } ],
+  "createdAt" : "2018-12-28T13:21:27.137Z",
+  "language" : "en",
+  "version" : {
+    "nluModel" : "0.17.0"
+  },
+  "platform" : {
+    "type" : "raspberrypi"
+  },
+  "asr" : {
+    "type" : "snips"
+  },
+  "analyticsEnabled" : true,
+  "heartbeatEnabled" : true,
+  "hotword" : "hey_snips"
+}

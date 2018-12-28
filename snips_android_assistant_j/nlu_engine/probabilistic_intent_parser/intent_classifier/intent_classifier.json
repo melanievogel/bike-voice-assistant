@@ -1,0 +1,151 @@
+{
+  "coeffs": [
+    [
+      -0.9078255035576333, 
+      -0.9405531757035682, 
+      0.730630988219984, 
+      -0.7679041329621326, 
+      -1.1652091441905228, 
+      -2.035697487737056, 
+      -0.738714856779583, 
+      -0.6438930147904554, 
+      -0.9405531757035682, 
+      -1.0042020483257816, 
+      -0.34180181313002495, 
+      -0.666427245274349, 
+      -0.5857890778676309, 
+      -0.4359418346247129, 
+      -0.33480956742110457, 
+      -0.5021141951154421, 
+      0.5630884085868187, 
+      -0.9405531757035682, 
+      -0.6299394365090312, 
+      -0.6009800005674211, 
+      0.9979745701561662, 
+      -1.4308068716252218, 
+      3.3750955068569137
+    ]
+  ], 
+  "config": {
+    "data_augmentation_config": {
+      "add_builtin_entities_examples": false, 
+      "min_utterances": 20, 
+      "noise_factor": 5, 
+      "unknown_word_prob": 0.2, 
+      "unknown_words_replacement_string": "unknownword"
+    }, 
+    "featurizer_config": {
+      "pvalue_threshold": 0.4, 
+      "sublinear_tf": false, 
+      "use_stemming": false, 
+      "word_clusters_name": null
+    }, 
+    "random_seed": null, 
+    "unit_name": "log_reg_intent_classifier"
+  }, 
+  "featurizer": {
+    "best_features": [
+      0, 
+      1, 
+      2, 
+      3, 
+      5, 
+      6, 
+      7, 
+      8, 
+      11, 
+      12, 
+      13, 
+      14, 
+      15, 
+      16, 
+      17, 
+      18, 
+      19, 
+      21, 
+      22, 
+      23, 
+      24, 
+      25, 
+      27
+    ], 
+    "config": {
+      "pvalue_threshold": 0.4, 
+      "sublinear_tf": false, 
+      "use_stemming": false, 
+      "word_clusters_name": null
+    }, 
+    "language_code": "en", 
+    "tfidf_vectorizer": {
+      "idf_diag": [
+        2.361803341111595, 
+        3.716349003916905, 
+        3.2308411881352046, 
+        3.716349003916905, 
+        3.716349003916905, 
+        3.3978952727983707, 
+        2.8513515664303006, 
+        4.4094961844768505, 
+        4.004031076368686, 
+        3.0232018233569597, 
+        2.6602963296675917, 
+        3.716349003916905, 
+        2.8513515664303006, 
+        4.4094961844768505, 
+        4.186352633162641, 
+        4.004031076368686, 
+        4.4094961844768505, 
+        4.186352633162641, 
+        4.186352633162641, 
+        2.537694007575259, 
+        5.102643365036796, 
+        3.716349003916905, 
+        4.186352633162641, 
+        4.4094961844768505, 
+        2.1848726329525165, 
+        3.0232018233569597, 
+        4.4094961844768505, 
+        1.122961711134835
+      ], 
+      "vocab": {
+        "a": 0, 
+        "am": 1, 
+        "and": 2, 
+        "builtinentityfeaturesnipsdatetime": 3, 
+        "builtinentityfeaturesnipsnumber": 4, 
+        "coming": 5, 
+        "entityfeaturestring": 6, 
+        "front": 7, 
+        "hillside": 8, 
+        "i": 9, 
+        "in": 10, 
+        "into": 11, 
+        "is": 12, 
+        "kilometers": 13, 
+        "me": 14, 
+        "meter": 15, 
+        "meters": 16, 
+        "mountainside": 17, 
+        "next": 18, 
+        "of": 19, 
+        "one": 20, 
+        "running": 21, 
+        "slope": 22, 
+        "steep": 23, 
+        "the": 24, 
+        "there": 25, 
+        "two": 26, 
+        "unknownword": 27
+      }
+    }, 
+    "unknown_words_replacement_string": "unknownword"
+  }, 
+  "intent_list": [
+    "melanievogel:AskForMountain", 
+    null
+  ], 
+  "intercept": [
+    -0.01718157532765837
+  ], 
+  "t_": 601.0
+}

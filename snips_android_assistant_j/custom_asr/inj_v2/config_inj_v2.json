@@ -1,0 +1,16 @@
+{
+    "snips/number": {
+        "vanilla": "c6b296d4-b687-4e7a-bd41-8462dd3c0a04.vanilla", 
+        "ngram": false, 
+        "added": "c6b296d4-b687-4e7a-bd41-8462dd3c0a04.added", 
+        "pruningThresholds": [], 
+        "order": 0
+    }, 
+    "string": {
+        "vanilla": "61a43edf-5f12-472f-8b1a-887cc6d70875.vanilla", 
+        "ngram": true, 
+        "added": "61a43edf-5f12-472f-8b1a-887cc6d70875.added", 
+        "pruningThresholds": [], 
+        "order": 3
+    }
+}

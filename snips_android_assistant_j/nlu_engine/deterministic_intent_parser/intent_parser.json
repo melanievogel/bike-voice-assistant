@@ -1,0 +1,39 @@
+{
+  "config": {
+    "max_pattern_length": 1000, 
+    "max_queries": 100, 
+    "unit_name": "deterministic_intent_parser"
+  }, 
+  "group_names_to_slot_names": {
+    "group_0": "hill", 
+    "group_1": "number", 
+    "group_10": "hill", 
+    "group_11": "hill", 
+    "group_2": "distance", 
+    "group_3": "hill", 
+    "group_4": "number", 
+    "group_5": "distance", 
+    "group_6": "hill", 
+    "group_7": "number", 
+    "group_8": "distance", 
+    "group_9": "hill"
+  }, 
+  "language_code": "en", 
+  "patterns": {
+    "melanievogel:AskForMountain": [
+      "^\\s*am\\s*i\\s*running\\s*into\\s*a\\s*(?P<group_9>%STRING%)\\s*$", 
+      "^\\s*is\\s*there\\s*a\\s*(?P<group_0>%STRING%)\\s*coming\\s*in\\s*(?P<group_1>%SNIPSNUMBER%)\\s*(?P<group_2>%STRING%)\\s*$", 
+      "^\\s*is\\s*there\\s*a\\s*(?P<group_10>%STRING%)\\s*in\\s*front\\s*of\\s*me\\s*$", 
+      "^\\s*is\\s*there\\s*a\\s*(?P<group_6>%STRING%)\\s*coming\\s*the\\s*next\\s*(?P<group_7>%SNIPSNUMBER%)\\s*(?P<group_8>%STRING%)\\s*$", 
+      "^\\s*is\\s*there\\s*a\\s*steep\\s*(?P<group_11>%STRING%)\\s*coming\\s*$", 
+      "^\\s*am\\s*i\\s*running\\s*into\\s*a\\s*(?P<group_3>%STRING%)\\s*in\\s*(?P<group_4>%SNIPSNUMBER%)\\s*(?P<group_5>%STRING%)\\s*$"
+    ]
+  }, 
+  "slot_names_to_entities": {
+    "melanievogel:AskForMountain": {
+      "distance": "string", 
+      "hill": "string", 
+      "number": "snips/number"
+    }
+  }
+}
