@@ -1,10 +1,16 @@
 <resources>
-    <string name="app_name">Demo Snips Android</string>
+    <string name="app_name">Demo Voice Assistant</string>
+    <string name="header">My Danger Zones</string>
+    <string name="add">Add</string>
     <string name="record">Start</string>
+    <string name="stoproute">Stop</string>
+    <string name="todz">My Danger Zones</string>
+    <string name="newroute">Start a tour</string>
     <string name="NeedRecordAudioPermission">"This sample needs RECORD_AUDIO permission"</string>
     <string name="hotword">Hotword</string>
     <string name="start_dialog_session">Start a dialogue session</string>
     <string name="loading">Loading…</string>
     <string name="stop">Stop</string>
     <string name="start">Start</string>
+
 </resources>

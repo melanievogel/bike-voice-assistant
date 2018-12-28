@@ -72,4 +72,5 @@ dependencies {
     }
 
     testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:design:27.1.1'
 }
