@@ -7,7 +7,9 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Process;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -19,12 +21,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 import ai.snips.hermes.InjectionKind;
@@ -58,11 +65,30 @@ public class MainActivity extends AppCompatActivity {
 
     private AudioRecord recorder;
 
+    private TextToSpeech mTTS;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ensurePermissions();
+
+        mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int result = mTTS.setLanguage(Locale.GERMAN);
+
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported");
+                    }else {
+                        Log.e("TTS", "working");
+                    }
+                    } else {
+                        Log.e("TTS", "Initialization failed");
+                    }
+                }
+        });
 
         findViewById(R.id.start).setOnClickListener(new OnClickListener() {
             @Override
@@ -76,13 +102,30 @@ public class MainActivity extends AppCompatActivity {
                     scrollView.setVisibility(View.GONE);
 
                     final View loadingPanel = findViewById(R.id.loadingPanel);
-                    loadingPanel.setVisibility(View.VISIBLE);
+                    loadingPanel.setVisibility(View.INVISIBLE);
 
                     startMegazordService();
+
+                    timer();
+
                 }
             }
         });
     }
+
+    private void timer(){
+        new Timer().schedule(new TimerTask() {
+            public void run () {
+                speak();
+            }
+        }, 20000, 20000);
+    }
+
+
+    private void speak(){
+        mTTS.speak("Hallo Johannes hier kommt eine Gefahrenmeldung", TextToSpeech.QUEUE_FLUSH, null,null);
+    }
+
 
     @Override
     protected void onDestroy() {
