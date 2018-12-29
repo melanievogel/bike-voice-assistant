@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                             final Button button = findViewById(R.id.start);
                             button.setEnabled(true);
                             //Before string: Start a dialogue session - means that no hotword is needed to trigger the listening
-                            button.setText(R.string.start);
+                            button.setText(R.string.startVoice);
                             button.setOnClickListener(new OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
