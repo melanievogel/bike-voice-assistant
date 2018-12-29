@@ -24,7 +24,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="Trage hier eine neue Gefahr ein"
+        android:hint="Neue Gefahr"
         android:inputType="textPersonName"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
