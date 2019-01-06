@@ -20,10 +20,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
 
 public class DangerZoneActivity extends AppCompatActivity {
    // String[] values = new String[]{"Steil abfallendes Gelände", "Brücke", "Steil abfallender Hang"};
@@ -31,8 +28,11 @@ public class DangerZoneActivity extends AppCompatActivity {
     Button addButton;
     EditText inputText;
     TextView gpsText;
-    ArrayList<String> list;
+    //ArrayList<String> list;
+    ArrayList<DangerZoneObject> objList;
     ArrayAdapter<String> adapter;
+    //CustomAdapter<DangerZoneObject> adapter;
+    ArrayList<String> resultStringList;
     private LocationManager locationManager;
     private LocationListener listener;
     @Override
@@ -45,16 +45,38 @@ public class DangerZoneActivity extends AppCompatActivity {
         inputText = findViewById(R.id.newItem);
         gpsText = findViewById(R.id.gpsdata);
 
-        list = new ArrayList<String>();
-        list.add("Gefährliches Gelände in 1km");
+        //list = new ArrayList<String>();
+        objList = new ArrayList<DangerZoneObject>();
+        //list.add("Gefährliches Gelände in 1km");
 
-        ListView listView = findViewById(R.id.listview);
+        objList.add(new DangerZoneObject(11, "testname", -122.0840, 37.4220, "12"));
+
+        resultStringList = new ArrayList<String>();
+
+        for(DangerZoneObject dz : objList){
+            String name = dz.getName().toString();
+            String longi = dz.getLongi().toString();
+            String lati = dz.getLati().toString();
+            String dist = dz.getDistance().toString();
+                resultStringList.add(name+ "                                " + dist+" \n" + longi + " " + lati + " ");
+        }
+
+            ListView listView = findViewById(R.id.listview);
+            //Log.d("hello", "hi" + objList.get(0).getDistance());
+
+        /*
+                adapter = new CustomAdapter<DangerZoneObject>(this, android.R.layout.simple_list_item_1, objList);
+                        listView.setAdapter(adapter);
+                clickItem(listView, adapter);
+*/
 
         adapter = new ArrayAdapter(this,
-                android.R.layout.simple_list_item_1, list);
+                android.R.layout.simple_list_item_1, resultStringList);
+
+
         listView.setAdapter(adapter);
         clickItem(listView, adapter);
-        addItem();
+        //addItem();
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -111,7 +133,7 @@ public class DangerZoneActivity extends AppCompatActivity {
                 //noinspection MissingPermission
                 locationManager.requestLocationUpdates("gps", 5000, 0, listener);
     }
-
+/*
     public void addItem(){
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -119,12 +141,13 @@ public class DangerZoneActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 String newItem = inputText.getText().toString();
+                //list.add(newItem);
                 list.add(newItem);
                 adapter.notifyDataSetChanged();
             }
         });
     }
-
+*/
     public void clickItem(ListView listView, final ArrayAdapter adapter) {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
