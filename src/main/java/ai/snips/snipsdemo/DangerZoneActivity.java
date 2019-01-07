@@ -14,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +23,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class DangerZoneActivity extends AppCompatActivity {
-   // String[] values = new String[]{"Steil abfallendes Gelände", "Brücke", "Steil abfallender Hang"};
+    // String[] values = new String[]{"Steil abfallendes Gelände", "Brücke", "Steil abfallender Hang"};
 
     Button addButton;
     EditText inputText;
@@ -35,8 +34,13 @@ public class DangerZoneActivity extends AppCompatActivity {
     //CustomAdapter<DangerZoneObject> adapter;
     ArrayList<String> resultStringList;
     //DangerZoneObject test;
+    Double myLong;
+    Double myLat;
+    String dummyDistance = "12";
+   // Location what;
     private LocationManager locationManager;
     private LocationListener listener;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -44,59 +48,58 @@ public class DangerZoneActivity extends AppCompatActivity {
         setContentView(R.layout.danger_zones);
 
         addButton = findViewById(R.id.button);
-       // inputText = findViewById(R.id.newItem);
         gpsText = findViewById(R.id.gpsdata);
 
 
-        //list = new ArrayList<String>();
         objList = new ArrayList<DangerZoneObject>();
 
         DangerZoneObject test = (DangerZoneObject) getIntent().getSerializableExtra("serialize_data");
-            if(test == null){
-                Log.d("NEXT: " ,"No object created yet.");
-            }else{
-                Log.d("NEXT: " ,"OBJL: " + test.getName());
-                objList.add(test);
-            }
+        if (test == null) {
+            Log.d("NEXT: ", "No object created yet.");
+        } else {
+            Log.d("NEXT: ", "OBJL: " + test.getName());
+            objList.add(test);
+        }
 
-        //objList.add()
-        //list.add("Gefährliches Gelände in 1km");
-
-        objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12" + "km"));
+        objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12"));
 
         resultStringList = new ArrayList<String>();
 
-        for(DangerZoneObject dz : objList){
+        for (DangerZoneObject dz : objList) {
             String name = dz.getName().toString();
             String longi = dz.getLongi().toString();
             String lati = dz.getLati().toString();
-            String dist = dz.getDistance().toString();
-                resultStringList.add(name+ "                                " + dist+" \n" + longi + " \n " + lati + " ");
+            String dist = dummyDistance;
+            resultStringList.add(name + "                           h     " + dist + " \n" + longi + " \n " + lati + " ");
         }
 
-            ListView listView = findViewById(R.id.listview);
-            //Log.d("hello", "hi" + objList.get(0).getDistance());
-
-        /*
-                adapter = new CustomAdapter<DangerZoneObject>(this, android.R.layout.simple_list_item_1, objList);
-                        listView.setAdapter(adapter);
-                clickItem(listView, adapter);
-*/
+        ListView listView = findViewById(R.id.listview);
 
         adapter = new ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, resultStringList);
 
-
         listView.setAdapter(adapter);
-        //clickItem(listView, adapter);
-        //addItem();
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        myLong = locationManager.getLastKnownLocation("gps").getLongitude();
+        myLat = locationManager.getLastKnownLocation("gps").getLatitude();
+
+        Log.d("LM: ", "mylong " + myLong);
+        Log.d("LM: ", "mylat " + myLat);
+        gpsText.append(myLong.toString());
+        gpsText.append(myLat.toString());
+
+
 
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                gpsText.append("\n " + location.getLongitude() + " " + location.getLatitude());
+                //myLong = location.getLongitude();
+                //myLat = location.getLatitude();
             }
 
             @Override
@@ -113,73 +116,19 @@ public class DangerZoneActivity extends AppCompatActivity {
                 startActivity(i);
             }
         };
-
-        configure_button();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case 10:
-                configure_button();
-                break;
-            default:
-                break;
-        }
-    }
-
-    void configure_button(){
-        // first check for permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET}
-                        ,10);
-            }
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        // this code won't execute IF permissions are not allowed, because in the line above there is return statement.
-
-                //noinspection MissingPermission
-                locationManager.requestLocationUpdates("gps", 5000, 0, listener);
+        locationManager.getLastKnownLocation("gps");
     }
-/*
-    public void addItem(){
 
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String newItem = inputText.getText().toString();
-                //list.add(newItem);
-                list.add(newItem);
-                adapter.notifyDataSetChanged();
-            }
-        });
-    }
-*/
-/*
-    public void clickItem(ListView listView, final ArrayAdapter adapter) {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
-                view.animate().setDuration(2000).alpha(0)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                //list.remove(item);
-                                adapter.notifyDataSetChanged();
-                                view.setAlpha(1);
-                            }
-                        });
-            }
-
-        });
-
-    }
-*/
     public void directToAddNewDangerZone(View view){
         Intent intent = new Intent(DangerZoneActivity.this, AddDangerZoneActivity.class);
         startActivity(intent);

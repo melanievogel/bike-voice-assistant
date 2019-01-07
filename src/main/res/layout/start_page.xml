@@ -7,29 +7,47 @@
     android:visibility="visible"
     tools:context="ai.snips.snipsdemo.StartActivity">
 
-    <Button
-        android:id="@+id/todangerzones"
-        android:layout_width="371dp"
-        android:layout_height="79dp"
-        android:layout_marginBottom="184dp"
-        android:text="@string/todz"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/newroute"
-        android:onClick="directToDangerZoneActivity"/>
-
-    <Button
-        android:id="@+id/newroute"
-        android:layout_width="371dp"
-        android:layout_height="79dp"
-        android:text="@string/newroute"
-        android:visibility="visible"
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.714"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.332"
-        android:onClick="directToMainActivity"/>
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/newroute"
+            android:layout_width="match_parent"
+            android:layout_height="79dp"
+            android:layout_marginTop="200dp"
+            android:layout_marginBottom="10dp"
+            android:onClick="directToMainActivity"
+            android:text="@string/newroute"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.714"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.332" />
+
+        <Button
+            android:id="@+id/todangerzones"
+            android:layout_width="match_parent"
+            android:layout_height="79dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="140dp"
+            android:onClick="directToDangerZoneActivity"
+            android:text="@string/todz"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/newroute" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
