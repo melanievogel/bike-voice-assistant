@@ -49,7 +49,7 @@ public class DangerZoneActivity extends AppCompatActivity {
         objList = new ArrayList<DangerZoneObject>();
         //list.add("Gefährliches Gelände in 1km");
 
-        objList.add(new DangerZoneObject(11, "testname", -122.0840, 37.4220, "12"));
+        objList.add(new DangerZoneObject("testname", -122.0840, 37.4220, "12"));
 
         resultStringList = new ArrayList<String>();
 
@@ -168,5 +168,10 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         });
 
+    }
+
+    public void directToAddNewDangerZone(View view){
+        Intent intent = new Intent(DangerZoneActivity.this, AddDangerZoneActivity.class);
+        startActivity(intent);
     }
 }

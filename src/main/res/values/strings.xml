@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Demo Voice Assistant</string>
+    <string name="savedz">Speichern</string>
     <string name="header">Meine Gefahrenzonen</string>
     <string name="add">Hinzufügen</string>
     <string name="record">Start</string>
@@ -12,5 +13,6 @@
     <string name="loading">Lade…</string>
     <string name="stopVoice">Stoppe Sprachassistenz</string>
     <string name="startVoice">Starte Sprachassistenz</string>
+
 
 </resources>

@@ -24,6 +24,7 @@
         </activity>
         <activity android:name=".MainActivity" android:label="Tour" android:screenOrientation="portrait"></activity>
         <activity android:name=".DangerZoneActivity" android:label="Gefahrenzonen" android:screenOrientation="portrait"></activity>
+        <activity android:name=".AddDangerZoneActivity" android:label="Neue Gefahrenzone" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

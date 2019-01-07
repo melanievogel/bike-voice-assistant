@@ -1,18 +1,14 @@
 package ai.snips.snipsdemo;
 
 import android.location.Location;
+import android.text.Editable;
 
 public class DangerZoneObject {
 
-    int id;
     String name;
     Double longi;
     Double lati;
     String distance;
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public void setName(String name) {
         this.name = name;
@@ -28,11 +24,6 @@ public class DangerZoneObject {
 
     public void setDistance(String distance) {
         this.distance = distance;
-    }
-
-    public int getId() {
-
-        return id;
     }
 
     public String getName() {
@@ -51,9 +42,8 @@ public class DangerZoneObject {
         return distance;
     }
 
-    public DangerZoneObject(int id, String name, Double longi, Double lati, String distance){
+    public DangerZoneObject(String name, Double longi, Double lati, String distance){
 
-        this.id = id;
         this.name = name;
         this.longi = longi;
         this.lati = lati;
