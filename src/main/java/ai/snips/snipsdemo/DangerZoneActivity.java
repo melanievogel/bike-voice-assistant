@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -33,6 +34,7 @@ public class DangerZoneActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter;
     //CustomAdapter<DangerZoneObject> adapter;
     ArrayList<String> resultStringList;
+    //DangerZoneObject test;
     private LocationManager locationManager;
     private LocationListener listener;
     @Override
@@ -42,14 +44,25 @@ public class DangerZoneActivity extends AppCompatActivity {
         setContentView(R.layout.danger_zones);
 
         addButton = findViewById(R.id.button);
-        inputText = findViewById(R.id.newItem);
+       // inputText = findViewById(R.id.newItem);
         gpsText = findViewById(R.id.gpsdata);
+
 
         //list = new ArrayList<String>();
         objList = new ArrayList<DangerZoneObject>();
+
+        DangerZoneObject test = (DangerZoneObject) getIntent().getSerializableExtra("serialize_data");
+            if(test == null){
+                Log.d("NEXT: " ,"No object created yet.");
+            }else{
+                Log.d("NEXT: " ,"OBJL: " + test.getName());
+                objList.add(test);
+            }
+
+        //objList.add()
         //list.add("Gefährliches Gelände in 1km");
 
-        objList.add(new DangerZoneObject("testname", -122.0840, 37.4220, "12"));
+        objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12" + "km"));
 
         resultStringList = new ArrayList<String>();
 
@@ -58,7 +71,7 @@ public class DangerZoneActivity extends AppCompatActivity {
             String longi = dz.getLongi().toString();
             String lati = dz.getLati().toString();
             String dist = dz.getDistance().toString();
-                resultStringList.add(name+ "                                " + dist+" \n" + longi + " " + lati + " ");
+                resultStringList.add(name+ "                                " + dist+" \n" + longi + " \n " + lati + " ");
         }
 
             ListView listView = findViewById(R.id.listview);
@@ -75,11 +88,10 @@ public class DangerZoneActivity extends AppCompatActivity {
 
 
         listView.setAdapter(adapter);
-        clickItem(listView, adapter);
+        //clickItem(listView, adapter);
         //addItem();
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
 
         listener = new LocationListener() {
             @Override
@@ -89,17 +101,14 @@ public class DangerZoneActivity extends AppCompatActivity {
 
             @Override
             public void onStatusChanged(String s, int i, Bundle bundle) {
-
             }
 
             @Override
             public void onProviderEnabled(String s) {
-
             }
 
             @Override
             public void onProviderDisabled(String s) {
-
                 Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(i);
             }
@@ -148,6 +157,7 @@ public class DangerZoneActivity extends AppCompatActivity {
         });
     }
 */
+/*
     public void clickItem(ListView listView, final ArrayAdapter adapter) {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -169,7 +179,7 @@ public class DangerZoneActivity extends AppCompatActivity {
         });
 
     }
-
+*/
     public void directToAddNewDangerZone(View view){
         Intent intent = new Intent(DangerZoneActivity.this, AddDangerZoneActivity.class);
         startActivity(intent);

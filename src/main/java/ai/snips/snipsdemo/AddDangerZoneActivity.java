@@ -46,7 +46,7 @@ public class AddDangerZoneActivity extends AppCompatActivity {
     public void directBackToDangerZoneActivity(View view){
         passObj = saveNewDZ();
         Intent intent = new Intent(AddDangerZoneActivity.this, DangerZoneActivity.class);
-        //intent.putExtra();
+        intent.putExtra("serialize_data", passObj);
         startActivity(intent);
     }
 }

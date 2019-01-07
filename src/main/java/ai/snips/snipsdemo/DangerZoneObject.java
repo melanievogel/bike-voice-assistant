@@ -3,12 +3,14 @@ package ai.snips.snipsdemo;
 import android.location.Location;
 import android.text.Editable;
 
-public class DangerZoneObject {
+import java.io.Serializable;
 
-    String name;
-    Double longi;
-    Double lati;
-    String distance;
+public class DangerZoneObject  implements Serializable {
+
+    private String name;
+    private Double longi;
+    private Double lati;
+    private String distance;
 
     public void setName(String name) {
         this.name = name;
@@ -48,10 +50,5 @@ public class DangerZoneObject {
         this.longi = longi;
         this.lati = lati;
         this.distance = distance;
-
     }
-
-
-
-
 }
