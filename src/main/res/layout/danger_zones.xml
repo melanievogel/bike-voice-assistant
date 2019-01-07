@@ -30,7 +30,7 @@
         <TextView
             android:id="@+id/gpsdata"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
+            android:layout_height="66dp"
             android:layout_marginTop="10dp"
             android:scrollHorizontally="true"
             android:text="  Meine aktuellen Koordinaten:"
@@ -44,8 +44,7 @@
             android:layout_marginTop="20dp"
             android:text="  Meine Gefahrenzonen"
             android:textAlignment="viewStart"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:textSize="24sp"
             tools:layout_editor_absoluteX="11dp"
             tools:layout_editor_absoluteY="192dp" />
 

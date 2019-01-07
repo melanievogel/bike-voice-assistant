@@ -19,27 +19,28 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
+import static java.lang.Math.acos;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import java.util.ArrayList;
 
 public class DangerZoneActivity extends AppCompatActivity {
     // String[] values = new String[]{"Steil abfallendes Gelände", "Brücke", "Steil abfallender Hang"};
 
     Button addButton;
-    EditText inputText;
     TextView gpsText;
-    //ArrayList<String> list;
     ArrayList<DangerZoneObject> objList;
     ArrayAdapter<String> adapter;
-    //CustomAdapter<DangerZoneObject> adapter;
     ArrayList<String> resultStringList;
-    //DangerZoneObject test;
     Double myLong;
     Double myLat;
-    String dummyDistance = "12";
-   // Location what;
+    Double distance;
+    Long distance_round;
+    Double myLong_round;
+    Double myLat_round;
     private LocationManager locationManager;
     private LocationListener listener;
+    static double PI_RAD = Math.PI / 180.0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,37 +51,13 @@ public class DangerZoneActivity extends AppCompatActivity {
         addButton = findViewById(R.id.button);
         gpsText = findViewById(R.id.gpsdata);
 
-
-        objList = new ArrayList<DangerZoneObject>();
-
-        DangerZoneObject test = (DangerZoneObject) getIntent().getSerializableExtra("serialize_data");
-        if (test == null) {
-            Log.d("NEXT: ", "No object created yet.");
-        } else {
-            Log.d("NEXT: ", "OBJL: " + test.getName());
-            objList.add(test);
-        }
-
-        objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12"));
-
-        resultStringList = new ArrayList<String>();
-
-        for (DangerZoneObject dz : objList) {
-            String name = dz.getName().toString();
-            String longi = dz.getLongi().toString();
-            String lati = dz.getLati().toString();
-            String dist = dummyDistance;
-            resultStringList.add(name + "                           h     " + dist + " \n" + longi + " \n " + lati + " ");
-        }
-
-        ListView listView = findViewById(R.id.listview);
-
-        adapter = new ArrayAdapter(this,
-                android.R.layout.simple_list_item_1, resultStringList);
-
-        listView.setAdapter(adapter);
+       // distance = greatCircleInKilometers(37.4220, -122.084, 98.5580, 125.001);
+       // distance_round =  Math.round(distance);
+        //Log.d("DISTANCE: ", "distance " + Math.round(distance));
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -88,49 +65,61 @@ public class DangerZoneActivity extends AppCompatActivity {
         myLong = locationManager.getLastKnownLocation("gps").getLongitude();
         myLat = locationManager.getLastKnownLocation("gps").getLatitude();
 
-        Log.d("LM: ", "mylong " + myLong);
-        Log.d("LM: ", "mylat " + myLat);
-        gpsText.append(myLong.toString());
-        gpsText.append(myLat.toString());
+        objList = new ArrayList<DangerZoneObject>();
 
+        objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12"));
 
-
-        listener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                //myLong = location.getLongitude();
-                //myLat = location.getLatitude();
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(i);
-            }
-        };
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+        DangerZoneObject test = (DangerZoneObject) getIntent().getSerializableExtra("serialize_data");
+        if (test == null) {
+            objList.add(new DangerZoneObject("Berg2", -122.0840, 37.4220, "12"));
+            Log.d("NEXT: ", "No object created yet.");
+        } else {
+            Log.d("NEXT: ", "OBJL: " + test.getName());
+            objList.add(test);
         }
-        locationManager.getLastKnownLocation("gps");
+
+        resultStringList = new ArrayList<String>(5);
+
+        for (DangerZoneObject dz : objList) {
+            String name = dz.getName().toString();
+           // String longi = dz.getLongi().toString();
+          //  String lati = dz.getLati().toString();
+            Double longi2 = dz.getLongi();
+            Double lati2 = dz.getLati();
+         //   String dist = distance.toString();
+            Double dist2 = greatCircleInKilometers(lati2,longi2,myLat,myLong);
+            Log.d("LATI: ", "lati2 " + lati2);
+            resultStringList.add(name + "\n"  + " LG: " + longi2 + " BG: " + lati2 + " " + "\n" + "Dist: " + Math.round(dist2) + " km");
+        }
+
+        ListView listView = findViewById(R.id.listview);
+        //TODO: Adapter zu spät aufgerufen?
+        adapter = new ArrayAdapter(this,
+                android.R.layout.simple_list_item_1, resultStringList);
+
+        listView.setAdapter(adapter);
+
+        //Log.d("LM: ", "mylong " + myLong);
+        //Log.d("LM: ", "mylat " + myLat);
+        myLong_round = Math.round(myLong * 100.0)/100.0;
+        myLat_round = Math.round(myLat * 100.0)/100.0;
+
+        gpsText.append("\n" + "  Längengrad: " + myLong_round.toString());
+        gpsText.append("\n" + "  Breitengrad: " + myLat_round.toString());
+
     }
 
     public void directToAddNewDangerZone(View view){
         Intent intent = new Intent(DangerZoneActivity.this, AddDangerZoneActivity.class);
         startActivity(intent);
+    }
+
+    public double greatCircleInKilometers(double lat1, double long1, double lat2, double long2) {
+        double phi1 = lat1 * PI_RAD;
+        double phi2 = lat2 * PI_RAD;
+        double lam1 = long1 * PI_RAD;
+        double lam2 = long2 * PI_RAD;
+
+        return 6371.01 * acos(sin(phi1) * sin(phi2) + cos(phi1) * cos(phi2) * cos(lam2 - lam1));
     }
 }
