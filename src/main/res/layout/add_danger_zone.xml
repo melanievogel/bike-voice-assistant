@@ -36,15 +36,14 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Name d. Gefahr"
-            android:inputType="textPersonName"
-            android:text="Name" />
+            android:inputType="textPersonName" />
 
         <EditText
             android:id="@+id/longidz"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Längengrad"
+            android:hint="Längengrad z.B. 122.0018"
             android:inputType="numberDecimal" />
 
         <EditText
@@ -52,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Breitengrad"
+            android:hint="Breitengrad z.B. 37.422"
             android:inputType="numberDecimal" />
     </LinearLayout>
 
