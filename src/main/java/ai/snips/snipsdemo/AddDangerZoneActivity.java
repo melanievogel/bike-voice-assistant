@@ -2,15 +2,13 @@ package ai.snips.snipsdemo;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import org.w3c.dom.Text;
+import java.util.ArrayList;
 
 public class AddDangerZoneActivity extends AppCompatActivity {
 
@@ -18,9 +16,10 @@ public class AddDangerZoneActivity extends AppCompatActivity {
     EditText longi;
     EditText lati;
     Button save;
+    ArrayList<DangerZoneObject> testList;
 
     DangerZoneObject myNewObj;
-    DangerZoneObject passObj;
+    ArrayList<DangerZoneObject> passObj;
 
 
     @Override
@@ -35,13 +34,15 @@ public class AddDangerZoneActivity extends AppCompatActivity {
 
     }
 
-    public DangerZoneObject saveNewDZ(){
+    public ArrayList<DangerZoneObject> saveNewDZ(){
+        testList = (ArrayList<DangerZoneObject>) getIntent().getSerializableExtra("objList");
         myNewObj = new DangerZoneObject("", 0.0, 0.0, "");
         myNewObj.setName(nameNewDz.getText().toString());
         myNewObj.setLongi(Double.parseDouble(String.valueOf(longi.getText())));
         myNewObj.setLati(Double.parseDouble(String.valueOf(lati.getText())));
-        Log.d("as", "ObjName: " + myNewObj.getName());
-        return myNewObj;
+        testList.add(myNewObj);
+        Log.d("TEST", "AAAAAAAAAAAAAAAAAAAAAAAAA: " + myNewObj.getName());
+        return testList;
     }
 
     public void directBackToDangerZoneActivity(View view){

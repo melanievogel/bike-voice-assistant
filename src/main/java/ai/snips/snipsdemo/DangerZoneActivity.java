@@ -64,15 +64,18 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         objList = new ArrayList<DangerZoneObject>();
 
-        objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12"));
+        ArrayList<DangerZoneObject> test = (ArrayList<DangerZoneObject>) getIntent().getSerializableExtra("serialize_data");
 
-        DangerZoneObject test = (DangerZoneObject) getIntent().getSerializableExtra("serialize_data");
         if (test == null) {
+            objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12"));
             Log.d("NEXT: ", "No object created yet.");
         } else {
-            objList.add(new DangerZoneObject("Berg2", -122.0840, 38.4220, "12"));
-            Log.d("NEXT: ", "OBJL: " + test.getName());
-            objList.add(test);
+            //objList.add(new DangerZoneObject("Berg2", -122.0840, 38.4220, "12"));
+            //Log.d("NEXT: ", "OBJL: " + test.getName());
+            for(DangerZoneObject i : test){
+                objList.add(i);
+
+            }
         }
 
         resultStringList = new ArrayList<String>(5);
@@ -108,6 +111,7 @@ public class DangerZoneActivity extends AppCompatActivity {
 
     public void directToAddNewDangerZone(View view){
         Intent intent = new Intent(DangerZoneActivity.this, AddDangerZoneActivity.class);
+        intent.putExtra("objList", objList);
         startActivity(intent);
     }
 
