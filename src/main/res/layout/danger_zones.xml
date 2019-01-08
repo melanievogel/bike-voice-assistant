@@ -27,6 +27,7 @@
             android:layout_marginBottom="10dp"
             android:onClick="directToAddNewDangerZone"
             android:text="@string/add"
+            android:textStyle="normal"
             tools:layout_editor_absoluteX="7dp"
             tools:layout_editor_absoluteY="16dp" />
 
@@ -37,6 +38,7 @@
             android:layout_marginTop="10dp"
             android:scrollHorizontally="true"
             android:text="  Meine aktuellen Koordinaten:"
+            android:textAlignment="center"
             tools:layout_editor_absoluteX="10dp"
             tools:layout_editor_absoluteY="95dp" />
 
@@ -46,7 +48,7 @@
             android:layout_height="51dp"
             android:layout_marginTop="20dp"
             android:text=" Meine Gefahrenzonen"
-            android:textAlignment="viewStart"
+            android:textAlignment="textStart"
             android:textSize="24sp"
             tools:layout_editor_absoluteX="11dp"
             tools:layout_editor_absoluteY="192dp" />
@@ -55,6 +57,8 @@
             android:id="@+id/listview"
             android:layout_width="match_parent"
             android:layout_height="597dp"
+            android:textAlignment="textStart"
+            android:textColor="#474747"
             tools:layout_editor_absoluteY="254dp" />
     </LinearLayout>
 

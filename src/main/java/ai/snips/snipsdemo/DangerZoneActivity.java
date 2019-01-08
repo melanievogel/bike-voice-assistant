@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,6 +23,8 @@ import android.widget.TextView;
 import static java.lang.Math.acos;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+
+import java.security.Key;
 import java.util.ArrayList;
 
 public class DangerZoneActivity extends AppCompatActivity {
@@ -45,7 +48,9 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.danger_zones);
+        //onBackPressed();
 
+       // getCallingActivity().onBackPressed();
         addButton = findViewById(R.id.button);
         gpsText = findViewById(R.id.gpsdata);
 
@@ -122,5 +127,12 @@ public class DangerZoneActivity extends AppCompatActivity {
         double lam2 = long2 * PI_RAD;
 
         return 6371.01 * acos(sin(phi1) * sin(phi2) + cos(phi1) * cos(phi2) * cos(lam2 - lam1));
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(DangerZoneActivity.this, StartActivity.class);
+        startActivity(intent);
     }
 }

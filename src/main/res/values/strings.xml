@@ -2,10 +2,10 @@
     <string name="app_name">Demo Voice Assistant</string>
     <string name="savedz">Speichern</string>
     <string name="header">Meine Gefahrenzonen</string>
-    <string name="add">Hinzufügen</string>
+    <string name="add">Neue Gefahr hinzufügen</string>
     <string name="record">Start</string>
     <string name="stoproute">Stop</string>
-    <string name="todz">  Meine Gefahrenzonen</string>
+    <string name="todz">Meine Gefahrenzonen</string>
     <string name="newroute">Starte Tour</string>
     <string name="NeedRecordAudioPermission">"This sample needs RECORD_AUDIO permission"</string>
     <string name="hotword">Hotword</string>

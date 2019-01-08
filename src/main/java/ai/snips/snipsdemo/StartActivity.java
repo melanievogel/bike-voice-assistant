@@ -23,4 +23,5 @@ public class StartActivity extends AppCompatActivity {
         Intent intent = new Intent(StartActivity.this, DangerZoneActivity.class);
         startActivity(intent);
     }
+
 }

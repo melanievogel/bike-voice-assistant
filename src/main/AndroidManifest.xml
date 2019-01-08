@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:name=".DemoApplication"
         android:theme="@style/AppTheme">
-        <activity android:name=".StartActivity" android:label="Home" android:screenOrientation="portrait">
+        <activity android:name=".StartActivity" android:label="My Assistant" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
