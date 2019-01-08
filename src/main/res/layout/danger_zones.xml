@@ -4,16 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
-    tools:layout_editor_absoluteY="81dp">
+    tools:layout_editor_absoluteX="10dp"
+    tools:layout_editor_absoluteY="91dp">
 
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="0dp"
-        android:layout_height="338dp"
+        android:layout_height="0dp"
         android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -42,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="51dp"
             android:layout_marginTop="20dp"
-            android:text="  Meine Gefahrenzonen"
+            android:text=" Meine Gefahrenzonen"
             android:textAlignment="viewStart"
             android:textSize="24sp"
             tools:layout_editor_absoluteX="11dp"

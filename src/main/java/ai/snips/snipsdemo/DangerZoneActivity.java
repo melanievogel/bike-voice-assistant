@@ -25,8 +25,6 @@ import static java.lang.Math.sin;
 import java.util.ArrayList;
 
 public class DangerZoneActivity extends AppCompatActivity {
-    // String[] values = new String[]{"Steil abfallendes Gelände", "Brücke", "Steil abfallender Hang"};
-
     Button addButton;
     TextView gpsText;
     ArrayList<DangerZoneObject> objList;
@@ -57,7 +55,6 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -71,9 +68,9 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         DangerZoneObject test = (DangerZoneObject) getIntent().getSerializableExtra("serialize_data");
         if (test == null) {
-            objList.add(new DangerZoneObject("Berg2", -122.0840, 37.4220, "12"));
             Log.d("NEXT: ", "No object created yet.");
         } else {
+            objList.add(new DangerZoneObject("Berg2", -122.0840, 38.4220, "12"));
             Log.d("NEXT: ", "OBJL: " + test.getName());
             objList.add(test);
         }
@@ -89,7 +86,7 @@ public class DangerZoneActivity extends AppCompatActivity {
          //   String dist = distance.toString();
             Double dist2 = greatCircleInKilometers(lati2,longi2,myLat,myLong);
             Log.d("LATI: ", "lati2 " + lati2);
-            resultStringList.add(name + "\n"  + " LG: " + longi2 + " BG: " + lati2 + " " + "\n" + "Dist: " + Math.round(dist2) + " km");
+            resultStringList.add(name + "\n"  + "LG: " + longi2 + ", BG: " + lati2 + " " + "\n" + "Dist: " + Math.round(dist2) + " km");
         }
 
         ListView listView = findViewById(R.id.listview);

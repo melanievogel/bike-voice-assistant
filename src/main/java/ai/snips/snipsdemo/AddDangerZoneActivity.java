@@ -39,6 +39,7 @@ public class AddDangerZoneActivity extends AppCompatActivity {
         myNewObj = new DangerZoneObject("", 0.0, 0.0, "");
         myNewObj.setName(nameNewDz.getText().toString());
         myNewObj.setLongi(Double.parseDouble(String.valueOf(longi.getText())));
+        myNewObj.setLati(Double.parseDouble(String.valueOf(lati.getText())));
         Log.d("as", "ObjName: " + myNewObj.getName());
         return myNewObj;
     }
