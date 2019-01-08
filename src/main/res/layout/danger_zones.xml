@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="51dp"
             android:layout_marginTop="20dp"
-            android:text=" Meine Gefahrenzonen"
+            android:text="Meine Gefahrenzonen"
             android:textAlignment="textStart"
             android:textSize="24sp"
             tools:layout_editor_absoluteX="11dp"
