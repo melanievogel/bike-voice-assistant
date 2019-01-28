@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 public class DangerZoneActivity extends AppCompatActivity {
     Button addButton;
+    Button show_DZ;
     TextView gpsText;
     ArrayList<DangerZoneObject> objList;
     ArrayAdapter<String> adapter;
@@ -38,6 +39,7 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         addButton = findViewById(R.id.button);
         gpsText = findViewById(R.id.gpsdata);
+        show_DZ=findViewById(R.id.show_dangerzones);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -53,7 +55,7 @@ public class DangerZoneActivity extends AppCompatActivity {
         ArrayList<DangerZoneObject> test = (ArrayList<DangerZoneObject>) getIntent().getSerializableExtra("serialize_data");
 
         if (test == null) {
-            objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12"));
+         //   objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12"));
         } else {
             for(DangerZoneObject i : test){
                 objList.add(i);
@@ -86,6 +88,11 @@ public class DangerZoneActivity extends AppCompatActivity {
 
     public void directToAddNewDangerZone(View view){
         Intent intent = new Intent(DangerZoneActivity.this, AddDangerZoneActivity.class);
+        intent.putExtra("objList", objList);
+        startActivity(intent);
+    }
+    public void directToMapActivity(View v){
+        Intent intent =new Intent(DangerZoneActivity.this, MapViewActivity.class);
         intent.putExtra("objList", objList);
         startActivity(intent);
     }

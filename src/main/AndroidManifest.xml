@@ -24,12 +24,12 @@
         android:name=".DemoApplication"
         android:theme="@style/AppTheme">
         <activity android:name=".StartActivity" android:label="My Assistant" android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".MapViewActivity" android:label="My Assistant" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".MapViewActivity" android:label="My Assistant" android:screenOrientation="portrait">
         </activity>
         <activity android:name=".MainActivity" android:label="Tour" android:screenOrientation="portrait"></activity>
         <activity android:name=".DangerZoneActivity" android:label="Gefahrenzonen" android:screenOrientation="portrait"></activity>

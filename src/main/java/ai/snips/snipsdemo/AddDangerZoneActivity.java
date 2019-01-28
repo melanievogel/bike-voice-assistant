@@ -34,7 +34,7 @@ public class AddDangerZoneActivity extends AppCompatActivity {
 
     }
 
-    public ArrayList<DangerZoneObject> saveNewDZ(){
+    public ArrayList<DangerZoneObject> saveNewDZ() {
         testList = (ArrayList<DangerZoneObject>) getIntent().getSerializableExtra("objList");
         myNewObj = new DangerZoneObject("", 0.0, 0.0, "");
         myNewObj.setName(nameNewDz.getText().toString());
@@ -45,7 +45,7 @@ public class AddDangerZoneActivity extends AppCompatActivity {
         return testList;
     }
 
-    public void directBackToDangerZoneActivity(View view){
+    public void directBackToDangerZoneActivity(View view) {
         passObj = saveNewDZ();
         Intent intent = new Intent(AddDangerZoneActivity.this, DangerZoneActivity.class);
         intent.putExtra("serialize_data", passObj);
