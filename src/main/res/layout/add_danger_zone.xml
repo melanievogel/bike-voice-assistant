@@ -53,6 +53,13 @@
             android:ems="10"
             android:hint="Breitengrad z.B. 37.422"
             android:inputType="numberDecimal" />
+
+        <Button
+            android:id="@+id/getMyPosition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="getMyPosition"
+            android:text="Meine zuletzt erfasste Position benutzen" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -1,6 +1,8 @@
 package ai.snips.snipsdemo;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,13 +15,15 @@ import java.util.ArrayList;
 public class AddDangerZoneActivity extends AppCompatActivity {
 
     EditText nameNewDz;
-    EditText longi;
-    EditText lati;
+    EditText longi = null;
+    EditText lati = null;
     Button save;
     ArrayList<DangerZoneObject> testList;
 
     DangerZoneObject myNewObj;
     ArrayList<DangerZoneObject> passObj;
+    LocationManager location;
+
 
 
     @Override
@@ -31,6 +35,7 @@ public class AddDangerZoneActivity extends AppCompatActivity {
         nameNewDz = findViewById(R.id.namedz);
         longi = findViewById(R.id.longidz);
         lati = findViewById(R.id.latidz);
+        location = (LocationManager) getSystemService(LOCATION_SERVICE);
 
     }
 
@@ -43,6 +48,16 @@ public class AddDangerZoneActivity extends AppCompatActivity {
         testList.add(myNewObj);
         Log.d("TEST", "AAAAAAAAAAAAAAAAAAAAAAAAA: " + myNewObj.getName());
         return testList;
+    }
+
+    @SuppressLint("MissingPermission")
+    public void getMyPosition(View view) {
+        Log.d("Test", "Succeed");
+
+        double longitude = location.getLastKnownLocation("gps").getLongitude();
+        double latitude =  location.getLastKnownLocation("gps").getLatitude();
+        longi.setText(Double.toString(longitude));
+        lati.setText(Double.toString(latitude));
     }
 
     public void directBackToDangerZoneActivity(View view) {
