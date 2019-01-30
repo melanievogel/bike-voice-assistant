@@ -39,19 +39,19 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/longidz"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Längengrad z.B. 122.0018"
-            android:inputType="numberDecimal" />
-
-        <EditText
             android:id="@+id/latidz"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Breitengrad z.B. 37.422"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/longidz"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Längengrad z.B. 122.0018"
             android:inputType="numberDecimal" />
 
         <Button
