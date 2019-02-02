@@ -12,12 +12,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import static java.lang.Math.acos;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import java.util.ArrayList;
 
 public class DangerZoneActivity extends AppCompatActivity {
+    static double PI_RAD = Math.PI / 180.0;
     Button addButton;
     Button show_DZ;
     TextView gpsText;
@@ -29,7 +36,6 @@ public class DangerZoneActivity extends AppCompatActivity {
     Double myLong_round;
     Double myLat_round;
     private LocationManager locationManager;
-    static double PI_RAD = Math.PI / 180.0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,7 +45,7 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         addButton = findViewById(R.id.button);
         gpsText = findViewById(R.id.gpsdata);
-        show_DZ=findViewById(R.id.show_dangerzones);
+        show_DZ = findViewById(R.id.show_dangerzones);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -52,24 +58,24 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         objList = new ArrayList<DangerZoneObject>();
 
-        ArrayList<DangerZoneObject> test = (ArrayList<DangerZoneObject>) getIntent().getSerializableExtra("serialize_data");
+     /*   ArrayList<DangerZoneObject> test = (ArrayList<DangerZoneObject>) getIntent().getSerializableExtra("serialize_data");
 
         if (test == null) {
-         //   objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12"));
+            //   objList.add(new DangerZoneObject("Berg", -122.0840, 37.4220, "12"));
         } else {
-            for(DangerZoneObject i : test){
+            for (DangerZoneObject i : test) {
                 objList.add(i);
             }
-        }
-
+        }*/
+        objList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike"));
         resultStringList = new ArrayList<String>(5);
 
         for (DangerZoneObject dz : objList) {
             String name = dz.getName();
             Double longi2 = dz.getLongi();
             Double lati2 = dz.getLati();
-            Double dist2 = greatCircleInKilometers(lati2,longi2,myLat,myLong);
-            resultStringList.add(name + "\n"  + "LG: " + longi2 + ", BG: " + lati2 + " " + "\n" + "Dist: " + Math.round(dist2) + " km");
+            Double dist2 = greatCircleInKilometers(lati2, longi2, myLat, myLong);
+            resultStringList.add(name + "\n" + "LG: " + longi2 + ", BG: " + lati2 + " " + "\n" + "Dist: " + Math.round(dist2) + " km");
         }
 
         ListView listView = findViewById(R.id.listview);
@@ -79,20 +85,21 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         listView.setAdapter(adapter);
 
-        myLong_round = Math.round(myLong * 100.0)/100.0;
-        myLat_round = Math.round(myLat * 100.0)/100.0;
+        myLong_round = Math.round(myLong * 100.0) / 100.0;
+        myLat_round = Math.round(myLat * 100.0) / 100.0;
 
         gpsText.append("\n" + "  Längengrad: " + myLong_round.toString());
         gpsText.append("\n" + "  Breitengrad: " + myLat_round.toString());
     }
 
-    public void directToAddNewDangerZone(View view){
+    public void directToAddNewDangerZone(View view) {
         Intent intent = new Intent(DangerZoneActivity.this, AddDangerZoneActivity.class);
         intent.putExtra("objList", objList);
         startActivity(intent);
     }
-    public void directToMapActivity(View v){
-        Intent intent =new Intent(DangerZoneActivity.this, MapViewActivity.class);
+
+    public void directToMapActivity(View v) {
+        Intent intent = new Intent(DangerZoneActivity.this, MapViewActivity.class);
         intent.putExtra("objList", objList);
         startActivity(intent);
     }
@@ -111,5 +118,41 @@ public class DangerZoneActivity extends AppCompatActivity {
         super.onBackPressed();
         Intent intent = new Intent(DangerZoneActivity.this, StartActivity.class);
         startActivity(intent);
+    }
+
+    public void write(String file, ArrayList<DangerZoneObject> myArrayList) {
+        FileOutputStream out;
+        myArrayList.addAll(read(getApplicationContext().getFilesDir() + "/myfile"));
+        try {
+            out = new FileOutputStream(file);
+            for (int i = myArrayList.size() - 1; i > -1; i--) {
+                String content = "name\n" + myArrayList.get(i).getName() + "\n" + myArrayList.get(i).getLati() + "\n" + myArrayList.get(i).getLongi() + "\n";
+                out.write(content.getBytes());
+            }
+            out.close();
+        } catch (Exception e) { //fehlende Permission oder sd an pc gemountet
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<DangerZoneObject> read(String file) {
+        ArrayList<DangerZoneObject> result = new ArrayList<>();
+        try {
+            BufferedReader buf = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = buf.readLine()) != null) {
+                if (line.equals("name")) {
+                    DangerZoneObject object = new DangerZoneObject("", 0.0, 0.0, "");
+                    object.setName(buf.readLine());
+                    object.setLati(Double.parseDouble(buf.readLine()));
+                    object.setLongi(Double.parseDouble(buf.readLine()));
+                    result.add(object);
+                }
+            }
+            buf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }
