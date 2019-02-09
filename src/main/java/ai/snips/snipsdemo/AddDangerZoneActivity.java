@@ -1,7 +1,12 @@
 package ai.snips.snipsdemo;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +32,7 @@ public class AddDangerZoneActivity extends AppCompatActivity {
     DangerZoneObject myNewObj;
     ArrayList<DangerZoneObject> passObj;
     LocationManager location;
-
+    String p;
 
 
     @Override
@@ -42,6 +47,14 @@ public class AddDangerZoneActivity extends AppCompatActivity {
         location = (LocationManager) getSystemService(LOCATION_SERVICE);
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    protected void onPause() {
+        super.onPause();
+    }
 
     public ArrayList<DangerZoneObject> saveNewDZ() {
         testList = (ArrayList<DangerZoneObject>) getIntent().getSerializableExtra("objList");
@@ -54,23 +67,24 @@ public class AddDangerZoneActivity extends AppCompatActivity {
         return testList;
     }
 
-    @SuppressLint("MissingPermission")
+
     public void getMyPosition(View view) {
         Log.d("Test", "Succeed");
 
         double longitude = location.getLastKnownLocation("gps").getLongitude();
-        double latitude =  location.getLastKnownLocation("gps").getLatitude();
+        double latitude = location.getLastKnownLocation("gps").getLatitude();
         longi.setText(Double.toString(longitude));
         lati.setText(Double.toString(latitude));
     }
 
     public void directBackToDangerZoneActivity(View view) {
         passObj = saveNewDZ();
-        write(getApplicationContext().getFilesDir() + "/zones.bike",passObj);
+        write(getApplicationContext().getFilesDir() + "/zones.bike", passObj);
         Intent intent = new Intent(AddDangerZoneActivity.this, DangerZoneActivity.class);
         intent.putExtra("serialize_data", passObj);
         startActivity(intent);
     }
+
     public void write(String file, ArrayList<DangerZoneObject> myArrayList) {
         FileOutputStream out;
         myArrayList.addAll(read(getApplicationContext().getFilesDir() + "/myfile"));

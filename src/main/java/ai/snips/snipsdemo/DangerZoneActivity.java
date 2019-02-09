@@ -1,8 +1,12 @@
 package ai.snips.snipsdemo;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -35,8 +39,13 @@ public class DangerZoneActivity extends AppCompatActivity {
     Double myLat;
     Double myLong_round;
     Double myLat_round;
-    private LocationManager locationManager;
+    String p;
+    Double lati;
+    Double longi;
+    private LocationManager m;
+    private LocationListener l;
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -46,15 +55,15 @@ public class DangerZoneActivity extends AppCompatActivity {
         addButton = findViewById(R.id.button);
         gpsText = findViewById(R.id.gpsdata);
         show_DZ = findViewById(R.id.show_dangerzones);
-
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
+        m = (LocationManager) getSystemService(LOCATION_SERVICE);
+        doIt();
+        m.requestLocationUpdates(p, 0, (float) 0.5, l);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-        myLong = locationManager.getLastKnownLocation("gps").getLongitude();
-        myLat = locationManager.getLastKnownLocation("gps").getLatitude();
+        // myLong = m.getLastKnownLocation("gps").getLongitude();
+        //myLat = m.getLastKnownLocation("gps").getLatitude();
 
         objList = new ArrayList<DangerZoneObject>();
 
@@ -70,13 +79,13 @@ public class DangerZoneActivity extends AppCompatActivity {
         objList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike"));
         resultStringList = new ArrayList<String>(5);
 
-        for (DangerZoneObject dz : objList) {
+       /* for (DangerZoneObject dz : objList) {
             String name = dz.getName();
             Double longi2 = dz.getLongi();
             Double lati2 = dz.getLati();
             Double dist2 = greatCircleInKilometers(lati2, longi2, myLat, myLong);
             resultStringList.add(name + "\n" + "LG: " + longi2 + ", BG: " + lati2 + " " + "\n" + "Dist: " + Math.round(dist2) + " km");
-        }
+        }*/
 
         ListView listView = findViewById(R.id.listview);
 
@@ -85,11 +94,18 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         listView.setAdapter(adapter);
 
-        myLong_round = Math.round(myLong * 100.0) / 100.0;
-        myLat_round = Math.round(myLat * 100.0) / 100.0;
+        //      myLong_round = Math.round(myLong * 100.0) / 100.0;
+        //    myLat_round = Math.round(myLat * 100.0) / 100.0;
 
-        gpsText.append("\n" + "  Längengrad: " + myLong_round.toString());
-        gpsText.append("\n" + "  Breitengrad: " + myLat_round.toString());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            m.removeUpdates(l);
+        }
     }
 
     public void directToAddNewDangerZone(View view) {
@@ -154,5 +170,56 @@ public class DangerZoneActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return result;
+    }
+
+    @SuppressLint("MissingPermission")
+    private void doIt() {
+        // LocationManager-Instanz ermitteln
+        m = getSystemService(LocationManager.class);
+        if (m == null) {
+            finish();
+        }
+        // Provider mit genauer Auflösung
+        // und mittlerem Energieverbrauch
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
+        p = m.getBestProvider(criteria, true);
+        // LocationListener-Objekt erzeugen
+        l = new LocationListener() {
+            @Override
+            public void onStatusChanged(String provider, int status,
+                                        Bundle extras) {
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+
+            @Override
+            public void onLocationChanged(Location location) {
+                lati = location.getLatitude();
+                longi = location.getLongitude();
+                gpsText.setText("Meine aktuellen Koordinaten:" + "\n" + "  Längengrad: " +
+                        longi.toString() + "\n" + "  Längengrad: " + lati.toString());
+               /* gpsText.append("\n" + "  Längengrad: " + longi.toString());
+                gpsText.append("\n" + "  Breitengrad: " + lati.toString());*/
+                resultStringList.clear();
+                for (DangerZoneObject dz : objList) {
+                    String name = dz.getName();
+                    Double longi2 = dz.getLongi();
+                    Double lati2 = dz.getLati();
+                    Double dist2 = greatCircleInKilometers(lati2, longi2, lati, longi);
+                    resultStringList.add(name + "\n" + "LG: " + longi2 + ", BG: " + lati2 + " " + "\n" + "Dist: " + Math.round(dist2) + " km");
+                }
+                adapter.notifyDataSetChanged();
+            }
+        };
     }
 }

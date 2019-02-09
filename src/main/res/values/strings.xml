@@ -13,6 +13,7 @@
     <string name="loading">Lade…</string>
     <string name="stopVoice">Stoppe Sprachassistenz</string>
     <string name="startVoice">Starte Sprachassistenz</string>
+    <string name="action_daten_aktualisieren">Aktualisieren</string>
 
 
 </resources>

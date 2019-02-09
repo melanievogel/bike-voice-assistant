@@ -106,25 +106,27 @@ public class MainActivity extends AppCompatActivity {
 
                     startMegazordService();
 
-                    timer();
+                    //timer();
 
                 }
             }
         });
     }
 
-    private void timer(){
+   /* private void timer(){
         new Timer().schedule(new TimerTask() {
             public void run () {
                 speak();
             }
         }, 20000, 20000);
     }
+*/
 
-
+/*
     private void speak(){
         mTTS.speak("Hallo Johannes hier kommt eine Gefahrenmeldung", TextToSpeech.QUEUE_FLUSH, null,null);
     }
+*/
 
 
     @Override
