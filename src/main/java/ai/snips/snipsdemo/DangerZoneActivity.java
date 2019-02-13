@@ -8,10 +8,12 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -51,6 +53,7 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.danger_zones);
+
 
         addButton = findViewById(R.id.button);
         gpsText = findViewById(R.id.gpsdata);
@@ -93,6 +96,20 @@ public class DangerZoneActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1, resultStringList);
 
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                        final String item = (String) parent.getItemAtPosition(position);
+                        view.animate().setDuration(2000).alpha(0).withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                resultStringList.remove(item);
+                                adapter.notifyDataSetChanged();
+                                view.setAlpha(1);
+                            }
+                        });
+            }
+        });
 
         //      myLong_round = Math.round(myLong * 100.0) / 100.0;
         //    myLat_round = Math.round(myLat * 100.0) / 100.0;
@@ -102,9 +119,11 @@ public class DangerZoneActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            m.removeUpdates(l);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                m.removeUpdates(l);
+            }
         }
     }
 
@@ -175,7 +194,9 @@ public class DangerZoneActivity extends AppCompatActivity {
     @SuppressLint("MissingPermission")
     private void doIt() {
         // LocationManager-Instanz ermitteln
-        m = getSystemService(LocationManager.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            m = getSystemService(LocationManager.class);
+        }
         if (m == null) {
             finish();
         }
