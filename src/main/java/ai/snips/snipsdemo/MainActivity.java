@@ -1,13 +1,16 @@
 package ai.snips.snipsdemo;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Process;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
@@ -21,20 +24,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 
-import org.w3c.dom.Text;
-
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ThreadLocalRandom;
 
-import ai.snips.hermes.InjectionKind;
 import ai.snips.hermes.InjectionOperation;
 import ai.snips.hermes.InjectionRequestMessage;
 import ai.snips.hermes.IntentMessage;
@@ -48,8 +49,12 @@ import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 
 import static ai.snips.hermes.InjectionKind.Add;
+import static ai.snips.snipsdemo.DangerZoneActivity.PI_RAD;
 import static android.media.MediaRecorder.AudioSource.MIC;
-import static java.util.Collections.indexOfSubList;
+import static android.speech.tts.TextToSpeech.QUEUE_FLUSH;
+import static java.lang.Math.acos;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static java.util.Collections.singletonList;
 
 public class MainActivity extends AppCompatActivity {
@@ -66,28 +71,54 @@ public class MainActivity extends AppCompatActivity {
     private AudioRecord recorder;
 
     private TextToSpeech mTTS;
+    private volatile boolean continueStreaming = true;
+    private LocationManager m;
+    private LocationListener l;
+    private double lati;
+    private double longi;
+    private String p;
+   /* private void timer(){
+        new Timer().schedule(new TimerTask() {
+            public void run () {
+                speak();
+            }
+        }, 20000, 20000);
+    }
+*/
 
+/*
+    private void speak(){
+        mTTS.speak("Hallo Johannes hier kommt eine Gefahrenmeldung", TextToSpeech.QUEUE_FLUSH, null,null);
+    }
+*/
+
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ensurePermissions();
-
+        if (!new File(getApplicationContext().getFilesDir() + "/zones.bike").exists()) {
+            write(getApplicationContext().getFilesDir() + "/zones.bike", null);
+        }
+        m = (LocationManager) getSystemService(LOCATION_SERVICE);
+        doIt();
+        m.requestLocationUpdates(p, 0, (float) 5, l);
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if (status == TextToSpeech.SUCCESS) {
-                    int result = mTTS.setLanguage(Locale.GERMAN);
+                    int result = mTTS.setLanguage(Locale.ENGLISH);
 
                     if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                         Log.e("TTS", "Language not supported");
-                    }else {
+                    } else {
                         Log.e("TTS", "working");
                     }
-                    } else {
-                        Log.e("TTS", "Initialization failed");
-                    }
+                } else {
+                    Log.e("TTS", "Initialization failed");
                 }
+            }
         });
 
         findViewById(R.id.start).setOnClickListener(new OnClickListener() {
@@ -112,22 +143,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-   /* private void timer(){
-        new Timer().schedule(new TimerTask() {
-            public void run () {
-                speak();
-            }
-        }, 20000, 20000);
-    }
-*/
-
-/*
-    private void speak(){
-        mTTS.speak("Hallo Johannes hier kommt eine Gefahrenmeldung", TextToSpeech.QUEUE_FLUSH, null,null);
-    }
-*/
-
 
     @Override
     protected void onDestroy() {
@@ -236,22 +251,29 @@ public class MainActivity extends AppCompatActivity {
             client.setOnIntentDetectedListener(new Function1<IntentMessage, Unit>() {
                 @Override
                 public Unit invoke(IntentMessage intentMessage) {
+                    String answer;
                     Log.d(TAG, "received an intent: " + intentMessage);
                     // Do your magic here :D
 
                     // For now, lets just use a random sentence to tell the user we understood but
                     // don't know what to do
 
-                    List<String> answers = Arrays.asList(
+                   /* List<String> answers = Arrays.asList(
                             "This is only a demo app. I understood you but I don't know how to do that",
                             "Can you teach me how to do that?",
                             "Oops! This action has not be coded yet!",
                             "Yes Master! ... hum, ..., er, ... imagine this as been done",
                             "Let's pretend I've done it! OK?");
-
-
-                    int index = Math.abs(ThreadLocalRandom.current().nextInt()) % answers.size();
-                    client.endSession(intentMessage.getSessionId(), answers.get(index));
+*/
+                    switch (intentMessage.getIntent().getIntentName()) {
+                        case "melanievogel:AskForMountain":
+                            answer = CheckForDz();
+                            break;
+                        default:
+                            answer = "I don't know how to do that";
+                    }
+                    //int index = Math.abs(ThreadLocalRandom.current().nextInt()) % answers.size();
+                    client.endSession(intentMessage.getSessionId(), answer);
                     return null;
                 }
             });
@@ -320,8 +342,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private volatile boolean continueStreaming = true;
-
     private void startStreaming() {
         continueStreaming = true;
         new Thread() {
@@ -352,6 +372,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onResume() {
         super.onResume();
@@ -359,6 +380,8 @@ public class MainActivity extends AppCompatActivity {
             startStreaming();
             client.resume();
         }
+        m.requestLocationUpdates(p, 0, (float) 5, l);
+
     }
 
     @Override
@@ -368,5 +391,128 @@ public class MainActivity extends AppCompatActivity {
             client.pause();
         }
         super.onPause();
+        m.removeUpdates(l);
     }
+
+    public void write(String file, ArrayList<DangerZoneObject> myArrayList) {
+        FileOutputStream out;
+        if (myArrayList == null) {
+        }
+        if (new File(file).exists()) {
+            myArrayList.addAll(read(file));
+        }
+        try {
+            out = new FileOutputStream(file);
+            for (int i = myArrayList.size() - 1; i > -1; i--) {
+                String content = "name\n" + myArrayList.get(i).getName() + "\n" + myArrayList.get(i).getLati() + "\n" + myArrayList.get(i).getLongi() + "\n";
+                out.write(content.getBytes());
+            }
+            out.close();
+        } catch (Exception e) { //fehlende Permission oder sd an pc gemountet
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<DangerZoneObject> read(String file) {
+        ArrayList<DangerZoneObject> result = new ArrayList<>();
+        try {
+            BufferedReader buf = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = buf.readLine()) != null) {
+                if (line.equals("name")) {
+                    DangerZoneObject object = new DangerZoneObject("", 0.0, 0.0, "");
+                    object.setName(buf.readLine());
+                    object.setLati(Double.parseDouble(buf.readLine()));
+                    object.setLongi(Double.parseDouble(buf.readLine()));
+                    result.add(object);
+                }
+            }
+            buf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @SuppressLint("MissingPermission")
+    private void doIt() {
+        // LocationManager-Instanz ermitteln
+        m = getSystemService(LocationManager.class);
+        if (m == null) {
+            finish();
+        }
+        // Provider mit genauer Auflösung
+        // und mittlerem Energieverbrauch
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
+        p = m.getBestProvider(criteria, true);
+        // LocationListener-Objekt erzeugen
+        l = new LocationListener() {
+            @Override
+            public void onStatusChanged(String provider, int status,
+                                        Bundle extras) {
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+
+            @Override
+            public void onLocationChanged(Location location) {
+                String warning;
+                Log.d(TAG, "Loc changed");
+                lati = location.getLatitude();
+                longi = location.getLongitude();
+                warning = CheckForDz();
+                if (!warning.equals("No there isn't")) {
+                    mTTS.speak(warning, QUEUE_FLUSH, null, null);
+                }
+
+            }
+        };
+    }
+
+    public double greatCircleInKilometers(double lat1, double long1, double lat2, double long2) {
+        double phi1 = lat1 * PI_RAD;
+        double phi2 = lat2 * PI_RAD;
+        double lam1 = long1 * PI_RAD;
+        double lam2 = long2 * PI_RAD;
+
+        return 6371.01 * acos(sin(phi1) * sin(phi2) + cos(phi1) * cos(phi2) * cos(lam2 - lam1));
+    }
+
+    public String CheckForDz() {
+        String answer = "There is a ";
+        Log.d(TAG, "entered");
+        ArrayList<DangerZoneObject> arrayList = new ArrayList<>();
+        if (arrayList.size() == 0) {
+            arrayList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike"));
+            Log.d(TAG, String.valueOf(arrayList.size()));
+        }
+        for (DangerZoneObject dz : arrayList) {
+            double distance = greatCircleInKilometers(lati, longi, dz.getLati(), dz.getLongi()) * 1000;
+            Log.d(TAG, String.valueOf(distance));
+            if (200.00 > distance) {
+                if (!answer.equals("There is a ")) {
+                    answer = answer + " and a ";
+                }
+                answer = answer + dz.getName() + " in " + (int) distance + " metres";
+            }
+        }
+        if (answer.equals("There is a")) {
+            answer = "No there isn't";
+        } else {
+            answer = answer + " coming";
+        }
+
+        return answer;
+    }
+
 }

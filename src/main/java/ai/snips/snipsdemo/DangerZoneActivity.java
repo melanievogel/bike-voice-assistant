@@ -138,7 +138,7 @@ public class DangerZoneActivity extends AppCompatActivity {
 
     public void write(String file, ArrayList<DangerZoneObject> myArrayList) {
         FileOutputStream out;
-        myArrayList.addAll(read(getApplicationContext().getFilesDir() + "/myfile"));
+        myArrayList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike"));
         try {
             out = new FileOutputStream(file);
             for (int i = myArrayList.size() - 1; i > -1; i--) {
