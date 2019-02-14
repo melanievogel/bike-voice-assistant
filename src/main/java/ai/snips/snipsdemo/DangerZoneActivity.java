@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -40,10 +39,7 @@ public class DangerZoneActivity extends AppCompatActivity {
     ArrayList<DangerZoneObject> objList;
     ArrayAdapter<String> adapter;
     ArrayList<String> resultStringList;
-    Double myLong;
-    Double myLat;
-    Double myLong_round;
-    Double myLat_round;
+    ListView listView;
     String p;
     Double lati;
     Double longi;
@@ -59,8 +55,9 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         addButton = findViewById(R.id.button);
         gpsText = findViewById(R.id.gpsdata);
-        registerForContextMenu(gpsText);
         show_DZ = findViewById(R.id.show_dangerzones);
+        listView = findViewById(R.id.listview);
+
         m = (LocationManager) getSystemService(LOCATION_SERVICE);
         doIt();
         m.requestLocationUpdates(p, 0, (float) 0.5, l);
@@ -72,12 +69,12 @@ public class DangerZoneActivity extends AppCompatActivity {
         objList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike"));
         resultStringList = new ArrayList<String>(5);
 
-        final ListView listView = findViewById(R.id.listview);
 
         adapter = new ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, resultStringList);
         listView.setAdapter(adapter);
-        listView.getItem
+        registerForContextMenu(listView);
+
         /*
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -103,6 +100,12 @@ public class DangerZoneActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.context_menu, menu);
+    }
+
+    @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_daten_aktualisieren:
@@ -114,12 +117,6 @@ public class DangerZoneActivity extends AppCompatActivity {
             default:
                 return super.onContextItemSelected(item);
         }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        getMenuInflater().inflate(R.menu.delete, menu);
     }
 
     @Override
