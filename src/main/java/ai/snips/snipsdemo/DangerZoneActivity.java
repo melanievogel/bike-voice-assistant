@@ -112,7 +112,7 @@ public class DangerZoneActivity extends AppCompatActivity {
                 Toast.makeText(this, "Aktualisieren", Toast.LENGTH_SHORT).show();
                 return true;*/
             case R.id.action_daten_loeschen:
-                Toast.makeText(this, "Löschen", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Gelöscht", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onContextItemSelected(item);
