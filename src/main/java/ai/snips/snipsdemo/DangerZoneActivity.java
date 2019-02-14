@@ -108,9 +108,9 @@ public class DangerZoneActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.action_daten_aktualisieren:
+            /*case R.id.action_daten_aktualisieren:
                 Toast.makeText(this, "Aktualisieren", Toast.LENGTH_SHORT).show();
-                return true;
+                return true;*/
             case R.id.action_daten_loeschen:
                 Toast.makeText(this, "Löschen", Toast.LENGTH_SHORT).show();
                 return true;
