@@ -34,6 +34,7 @@ public class AddDangerZoneActivity extends AppCompatActivity {
     LocationManager location;
     String p;
 
+    int counter = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,10 +64,10 @@ public class AddDangerZoneActivity extends AppCompatActivity {
         myNewObj.setLongi(Double.parseDouble(String.valueOf(longi.getText())));
         myNewObj.setLati(Double.parseDouble(String.valueOf(lati.getText())));
         testList.add(myNewObj);
+
         Log.d("TEST", "AAAAAAAAAAAAAAAAAAAAAAAAA: " + myNewObj.getName());
         return testList;
     }
-
 
     public void getMyPosition(View view) {
         Log.d("Test", "Succeed");
@@ -79,8 +80,7 @@ public class AddDangerZoneActivity extends AppCompatActivity {
 
     public void directBackToDangerZoneActivity(View view) {
         passObj = saveNewDZ();
-        write(getApplicationContext().getFilesDir() + "/zones.bike", passObj);
-        Intent intent = new Intent(AddDangerZoneActivity.this, DangerZoneActivity.class);
+        write(getApplicationContext().getFilesDir() + "/zones.bike", passObj);        Intent intent = new Intent(AddDangerZoneActivity.this, DangerZoneActivity.class);
         intent.putExtra("serialize_data", passObj);
         startActivity(intent);
     }

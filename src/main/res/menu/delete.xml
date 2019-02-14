@@ -5,4 +5,8 @@
         android:id="@+id/action_daten_aktualisieren"
         android:title="@string/action_daten_aktualisieren"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_daten_loeschen"
+        android:title="Löschen"
+        app:showAsAction="never" />
 </menu>
