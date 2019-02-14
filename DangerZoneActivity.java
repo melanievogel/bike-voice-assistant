@@ -68,6 +68,7 @@ public class DangerZoneActivity extends AppCompatActivity {
         }
 
         objList = new ArrayList<DangerZoneObject>();
+
      /*   ArrayList<DangerZoneObject> test = (ArrayList<DangerZoneObject>) getIntent().getSerializableExtra("serialize_data");
 
         if (test == null) {
