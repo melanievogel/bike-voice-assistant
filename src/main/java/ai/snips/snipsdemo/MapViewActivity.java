@@ -6,12 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
@@ -54,12 +56,14 @@ public class MapViewActivity extends Activity {
         setContentView(R.layout.map_view);
 
         map = findViewById(R.id.map);
-        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setUseDataConnection(false);
+        IMapController mapController = map.getController();
+        mapController.setZoom(15);
+        map.setTileSource(new XYTileSource(Environment.getExternalStorageState()+"/osmdroid/bike_assistant_atlas_2019-02-13_163556.zip", 2, 17, 256, ".png", new String[] {}));
 
         map.setBuiltInZoomControls(true);
         map.setMultiTouchControls(true);
 
-        IMapController mapController = map.getController();
         mapController.setZoom((int) 20);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         @SuppressLint("MissingPermission")

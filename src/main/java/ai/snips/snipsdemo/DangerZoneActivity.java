@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -79,7 +80,7 @@ public class DangerZoneActivity extends AppCompatActivity {
                 objList.add(i);
             }
         }*/
-        objList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike"));
+        objList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike", null));
         resultStringList = new ArrayList<String>(5);
 
        /* for (DangerZoneObject dz : objList) {
@@ -97,19 +98,23 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                final String item = (String) parent.getItemAtPosition(position);
+                ArrayList<DangerZoneObject> list = new ArrayList<>();
+                write(getApplicationContext().getFilesDir() + "/zones.bike", list,item);
+                Log.d("Tag", item);
+                view.animate().setDuration(2000).alpha(0).withEndAction(new Runnable() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-                        final String item = (String) parent.getItemAtPosition(position);
-                        view.animate().setDuration(2000).alpha(0).withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                resultStringList.remove(item);
-                                adapter.notifyDataSetChanged();
-                                view.setAlpha(1);
-                            }
-                        });
+                    public void run() {
+                        resultStringList.remove(item);
+                        adapter.notifyDataSetChanged();
+                        view.setAlpha(1);
+                    }
+                });
             }
         });
+
 
         //      myLong_round = Math.round(myLong * 100.0) / 100.0;
         //    myLat_round = Math.round(myLat * 100.0) / 100.0;
@@ -155,9 +160,9 @@ public class DangerZoneActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void write(String file, ArrayList<DangerZoneObject> myArrayList) {
+    public void write(String file, ArrayList<DangerZoneObject> myArrayList, String delete) {
         FileOutputStream out;
-        myArrayList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike"));
+        myArrayList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike", delete));
         try {
             out = new FileOutputStream(file);
             for (int i = myArrayList.size() - 1; i > -1; i--) {
@@ -170,18 +175,26 @@ public class DangerZoneActivity extends AppCompatActivity {
         }
     }
 
-    public ArrayList<DangerZoneObject> read(String file) {
+    public ArrayList<DangerZoneObject> read(String file, String delete) {
         ArrayList<DangerZoneObject> result = new ArrayList<>();
         try {
             BufferedReader buf = new BufferedReader(new FileReader(file));
             String line;
+            String temp;
             while ((line = buf.readLine()) != null) {
                 if (line.equals("name")) {
                     DangerZoneObject object = new DangerZoneObject("", 0.0, 0.0, "");
                     object.setName(buf.readLine());
                     object.setLati(Double.parseDouble(buf.readLine()));
                     object.setLongi(Double.parseDouble(buf.readLine()));
-                    result.add(object);
+                    temp = object.getName() + "\n" + "LG: " + object.getLongi() + ", BG: " + object.getLati() + " \nDist: ";
+                    if (delete != null) {
+                        if (!delete.contains(temp)) {
+                            result.add(object);
+                        }
+                    } else {
+                        result.add(object);
+                    }
                 }
             }
             buf.close();
@@ -242,5 +255,14 @@ public class DangerZoneActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         };
+    }
+
+    public class MyUndoListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+
+            // Code to undo the user's last action
+        }
     }
 }
