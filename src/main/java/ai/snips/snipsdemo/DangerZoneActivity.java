@@ -85,6 +85,8 @@ public class DangerZoneActivity extends AppCompatActivity {
         adapter = new ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, resultStringList);
         listView.setAdapter(adapter);
+
+        /*
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
@@ -102,7 +104,7 @@ public class DangerZoneActivity extends AppCompatActivity {
                 });
             }
         });
-
+*/
 
         //      myLong_round = Math.round(myLong * 100.0) / 100.0;
         //    myLat_round = Math.round(myLat * 100.0) / 100.0;
@@ -140,11 +142,22 @@ public class DangerZoneActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = info.position;
         switch (item.getItemId()){
             /*case R.id.action_daten_aktualisieren:
                 Toast.makeText(this, "Aktualisieren", Toast.LENGTH_SHORT).show();
                 return true;*/
             case R.id.action_daten_loeschen:
+                String itemt = resultStringList.get(position);
+                //objList.remove(itemt);
+                resultStringList.remove(itemt.toString());
+                adapter.notifyDataSetChanged();
+                /*
+                ArrayList<DangerZoneObject> list = new ArrayList<>();
+                write(getApplicationContext().getFilesDir() + "/zones.bike", list,item);
+               */
                 Toast.makeText(this, "Gelöscht", Toast.LENGTH_SHORT).show();
                 return true;
             default:
