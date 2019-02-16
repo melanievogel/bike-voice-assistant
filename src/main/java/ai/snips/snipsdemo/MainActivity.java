@@ -506,7 +506,7 @@ public class MainActivity extends AppCompatActivity {
                 answer = answer + dz.getName() + " in " + (int) distance + " metres";
             }
         }
-        if (answer.equals("There is a")) {
+        if (answer.equals("There is a ")) {
             answer = "No there isn't";
         } else {
             answer = answer + " coming";
