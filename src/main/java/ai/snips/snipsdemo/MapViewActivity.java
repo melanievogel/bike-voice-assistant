@@ -59,11 +59,9 @@ public class MapViewActivity extends Activity {
         map.setUseDataConnection(false);
         IMapController mapController = map.getController();
         mapController.setZoom(15);
-        map.setTileSource(new XYTileSource(Environment.getExternalStorageState()+"/osmdroid/bike_assistant_atlas_2019-02-13_163556.zip", 2, 17, 256, ".png", new String[] {}));
-
+        map.setTileSource(new XYTileSource(Environment.getExternalStorageState()+"/osmdroid/Bamberg.sqlite", 2, 17, 256, ".png", new String[] {}));
         map.setBuiltInZoomControls(true);
         map.setMultiTouchControls(true);
-
         mapController.setZoom((int) 20);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         @SuppressLint("MissingPermission")
