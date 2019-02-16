@@ -79,7 +79,7 @@ public class DangerZoneActivity extends AppCompatActivity {
             }
         }*/
         objList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike", null));
-        resultStringList = new ArrayList<String>(5);
+        resultStringList = new ArrayList<String>();
 
 
         adapter = new ArrayAdapter(this,
@@ -152,7 +152,8 @@ public class DangerZoneActivity extends AppCompatActivity {
             case R.id.action_daten_loeschen:
                 String itemt = resultStringList.get(position);
                 //objList.remove(itemt);
-                resultStringList.remove(itemt.toString());
+                write(getApplicationContext().getFilesDir() + "/zones.bike",new ArrayList<DangerZoneObject>(), itemt);
+                resultStringList.remove(itemt);
                 adapter.notifyDataSetChanged();
                 /*
                 ArrayList<DangerZoneObject> list = new ArrayList<>();

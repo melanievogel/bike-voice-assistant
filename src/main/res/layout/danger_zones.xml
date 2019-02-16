@@ -62,14 +62,26 @@
             tools:layout_editor_absoluteX="11dp"
             tools:layout_editor_absoluteY="192dp" />
 
-        <ListView
-            android:id="@+id/listview"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="597dp"
-            android:paddingLeft="-12dp"
-            android:textAlignment="textStart"
-            android:textColor="#474747"
-            tools:layout_editor_absoluteY="254dp" />
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <ListView
+                    android:id="@+id/listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="597dp"
+                    android:paddingLeft="-12dp"
+                    android:textAlignment="textStart"
+                    android:textColor="#474747"
+                    tools:layout_editor_absoluteY="254dp" />
+            </LinearLayout>
+        </ScrollView>
+
     </LinearLayout>
 
 
