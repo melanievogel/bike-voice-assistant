@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,11 +22,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
+
+import utils.ActionsUtil;
 
 import static java.lang.Math.acos;
 import static java.lang.Math.cos;
@@ -78,7 +75,7 @@ public class DangerZoneActivity extends AppCompatActivity {
                 objList.add(i);
             }
         }*/
-        objList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike", null));
+        objList.addAll(ActionsUtil.read(getApplicationContext().getFilesDir() + "/zones.bike", null));
         resultStringList = new ArrayList<String>();
 
 
@@ -145,14 +142,14 @@ public class DangerZoneActivity extends AppCompatActivity {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             /*case R.id.action_daten_aktualisieren:
                 Toast.makeText(this, "Aktualisieren", Toast.LENGTH_SHORT).show();
                 return true;*/
             case R.id.action_daten_loeschen:
                 String itemt = resultStringList.get(position);
                 //objList.remove(itemt);
-                write(getApplicationContext().getFilesDir() + "/zones.bike",new ArrayList<DangerZoneObject>(), itemt);
+                ActionsUtil.write(getApplicationContext().getFilesDir() + "/zones.bike", new ArrayList<DangerZoneObject>(), itemt);
                 resultStringList.remove(itemt);
                 adapter.notifyDataSetChanged();
                 /*
@@ -203,50 +200,6 @@ public class DangerZoneActivity extends AppCompatActivity {
         super.onBackPressed();
         Intent intent = new Intent(DangerZoneActivity.this, StartActivity.class);
         startActivity(intent);
-    }
-
-    public void write(String file, ArrayList<DangerZoneObject> myArrayList, String delete) {
-        FileOutputStream out;
-        myArrayList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike", delete));
-        try {
-            out = new FileOutputStream(file);
-            for (int i = myArrayList.size() - 1; i > -1; i--) {
-                String content = "name\n" + myArrayList.get(i).getName() + "\n" + myArrayList.get(i).getLati() + "\n" + myArrayList.get(i).getLongi() + "\n";
-                out.write(content.getBytes());
-            }
-            out.close();
-        } catch (Exception e) { //fehlende Permission oder sd an pc gemountet
-            e.printStackTrace();
-        }
-    }
-
-    public ArrayList<DangerZoneObject> read(String file, String delete) {
-        ArrayList<DangerZoneObject> result = new ArrayList<>();
-        try {
-            BufferedReader buf = new BufferedReader(new FileReader(file));
-            String line;
-            String temp;
-            while ((line = buf.readLine()) != null) {
-                if (line.equals("name")) {
-                    DangerZoneObject object = new DangerZoneObject("", 0.0, 0.0, "");
-                    object.setName(buf.readLine());
-                    object.setLati(Double.parseDouble(buf.readLine()));
-                    object.setLongi(Double.parseDouble(buf.readLine()));
-                    temp = object.getName() + "\n" + "LG: " + object.getLongi() + ", BG: " + object.getLati() + " \nDist: ";
-                    if (delete != null) {
-                        if (!delete.contains(temp)) {
-                            result.add(object);
-                        }
-                    } else {
-                        result.add(object);
-                    }
-                }
-            }
-            buf.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
     }
 
     @SuppressLint("MissingPermission")
