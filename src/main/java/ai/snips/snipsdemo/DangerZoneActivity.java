@@ -13,12 +13,15 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -38,10 +41,7 @@ public class DangerZoneActivity extends AppCompatActivity {
     ArrayList<DangerZoneObject> objList;
     ArrayAdapter<String> adapter;
     ArrayList<String> resultStringList;
-    Double myLong;
-    Double myLat;
-    Double myLong_round;
-    Double myLat_round;
+    ListView listView;
     String p;
     Double lati;
     Double longi;
@@ -55,19 +55,17 @@ public class DangerZoneActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.danger_zones);
 
-
         addButton = findViewById(R.id.button);
         gpsText = findViewById(R.id.gpsdata);
         show_DZ = findViewById(R.id.show_dangerzones);
+        listView = findViewById(R.id.listview);
+
         m = (LocationManager) getSystemService(LOCATION_SERVICE);
         doIt();
         m.requestLocationUpdates(p, 0, (float) 0.5, l);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-
-        // myLong = m.getLastKnownLocation("gps").getLongitude();
-        //myLat = m.getLastKnownLocation("gps").getLatitude();
 
         objList = new ArrayList<DangerZoneObject>();
 
@@ -83,20 +81,12 @@ public class DangerZoneActivity extends AppCompatActivity {
         objList.addAll(read(getApplicationContext().getFilesDir() + "/zones.bike", null));
         resultStringList = new ArrayList<String>(5);
 
-       /* for (DangerZoneObject dz : objList) {
-            String name = dz.getName();
-            Double longi2 = dz.getLongi();
-            Double lati2 = dz.getLati();
-            Double dist2 = greatCircleInKilometers(lati2, longi2, myLat, myLong);
-            resultStringList.add(name + "\n" + "LG: " + longi2 + ", BG: " + lati2 + " " + "\n" + "Dist: " + Math.round(dist2) + " km");
-        }*/
-
-        ListView listView = findViewById(R.id.listview);
 
         adapter = new ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, resultStringList);
-
         listView.setAdapter(adapter);
+
+        /*
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
@@ -114,11 +104,65 @@ public class DangerZoneActivity extends AppCompatActivity {
                 });
             }
         });
-
+*/
 
         //      myLong_round = Math.round(myLong * 100.0) / 100.0;
         //    myLat_round = Math.round(myLat * 100.0) / 100.0;
+        registerForContextMenu(listView);
 
+        /*
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                    final String item = (String) parent.getItemAtPosition(position);
+                    view.animate().setDuration(2000).alpha(0).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            resultStringList.remove(item);
+                            //File file = new File(getApplicationContext().getFilesDir() + "/zones.bike");
+                            // file.delete();
+                            adapter.notifyDataSetChanged();
+                            view.setAlpha(1);
+                        }
+                    });
+                }
+            });
+
+            //      myLong_round = Math.round(myLong * 100.0) / 100.0;
+            //    myLat_round = Math.round(myLat * 100.0) / 100.0;
+        }*/
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = info.position;
+        switch (item.getItemId()){
+            /*case R.id.action_daten_aktualisieren:
+                Toast.makeText(this, "Aktualisieren", Toast.LENGTH_SHORT).show();
+                return true;*/
+            case R.id.action_daten_loeschen:
+                String itemt = resultStringList.get(position);
+                //objList.remove(itemt);
+                resultStringList.remove(itemt.toString());
+                adapter.notifyDataSetChanged();
+                /*
+                ArrayList<DangerZoneObject> list = new ArrayList<>();
+                write(getApplicationContext().getFilesDir() + "/zones.bike", list,item);
+               */
+                Toast.makeText(this, "Gelöscht", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     @Override
