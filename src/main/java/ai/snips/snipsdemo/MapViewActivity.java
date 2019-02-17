@@ -59,7 +59,7 @@ public class MapViewActivity extends Activity {
         map.setUseDataConnection(false);
         IMapController mapController = map.getController();
         mapController.setZoom(15);
-        map.setTileSource(new XYTileSource(Environment.getExternalStorageState()+"/osmdroid/Bamberg.sqlite", 2, 17, 256, ".png", new String[] {}));
+        map.setTileSource(new XYTileSource(Environment.getExternalStorageState()+"/osmdroid/OpenStreetMap Hikebikemap.de", 2, 17, 256, ".png", new String[] {}));
         map.setBuiltInZoomControls(true);
         map.setMultiTouchControls(true);
         mapController.setZoom((int) 20);
