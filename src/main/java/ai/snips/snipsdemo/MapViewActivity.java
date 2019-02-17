@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -59,10 +58,10 @@ public class MapViewActivity extends Activity {
         map.setUseDataConnection(false);
         IMapController mapController = map.getController();
         mapController.setZoom(15);
-        map.setTileSource(new XYTileSource(Environment.getExternalStorageState()+"/osmdroid/OpenStreetMap Hikebikemap.de", 2, 17, 256, ".png", new String[] {}));
-        map.setBuiltInZoomControls(true);
-        map.setMultiTouchControls(true);
-        mapController.setZoom((int) 20);
+        map.setTileSource(new XYTileSource(Environment.getExternalStorageState()+"/osmdroid/Bamberg.sqlite", 2, 17, 256, ".PNG", new String[] {}));
+       // map.setBuiltInZoomControls(true);
+        //map.setMultiTouchControls(true);
+        mapController.setZoom((int) 17);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         @SuppressLint("MissingPermission")
         GeoPoint startPoint = new GeoPoint(locationManager.getLastKnownLocation("gps").getLatitude(), locationManager.getLastKnownLocation("gps").getLongitude());
