@@ -12,6 +12,9 @@ import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.MapTileProviderArray;
+import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.modules.OfflineTileProvider;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -60,19 +63,21 @@ public class MapViewActivity extends Activity {
 
 
         map = findViewById(R.id.map);
-        //map.setUseDataConnection(false);
+        map.setUseDataConnection(false);
 
-        String[] urls = {"http://127.0.0.1"};
+        String[] urls = {};
+        MapTileProviderBasic mapTileProviderBasic = new MapTileProviderBasic(ctx);
 
-        map.setTileSource(new XYTileSource("tiles", 2, 17, 256, ".PNG", urls));
+       // map.setTileSource(new XYTileSource(Environment.getExternalStorageDirectory() + "osmdroid/tiles.zip", 2, 17, 256, ".PNG", urls));
+        map.setTileSource(new XYTileSource(Environment.getExternalStorageDirectory() + "osmdroid/Bamberg.sqlite", 2, 17, 256, ".PNG", urls));
 
+
+        map.setTileProvider(mapTileProviderBasic);
         IMapController mapController = map.getController();
         mapController.setZoom(15);
 
-
-
-        // map.setBuiltInZoomControls(true);
-        //map.setMultiTouchControls(true);
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
         mapController.setZoom((int) 17);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
