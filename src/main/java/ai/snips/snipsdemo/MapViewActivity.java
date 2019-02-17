@@ -12,36 +12,34 @@ import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.IRegisterReceiver;
-import org.osmdroid.tileprovider.MapTileProviderArray;
-import org.osmdroid.tileprovider.modules.GEMFFileArchive;
+import org.osmdroid.tileprovider.modules.ArchiveFileFactory;
 import org.osmdroid.tileprovider.modules.IArchiveFile;
-import org.osmdroid.tileprovider.modules.MapTileFileArchiveProvider;
-import org.osmdroid.tileprovider.modules.MapTileFilesystemProvider;
-import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.modules.OfflineTileProvider;
-import org.osmdroid.tileprovider.modules.TileWriter;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.tileprovider.tilesource.FileBasedTileSource;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
+import static android.app.PendingIntent.getActivity;
 import static org.osmdroid.views.overlay.gridlines.LatLonGridlineOverlay.backgroundColor;
 import static org.osmdroid.views.overlay.gridlines.LatLonGridlineOverlay.fontColor;
 import static org.osmdroid.views.overlay.gridlines.LatLonGridlineOverlay.fontSizeDp;
 
 //import org.osmdroid.config.Configuration;
 
+/*
+Offline map implemenation adopted from:
+https://github.com/osmdroid/osmdroid/blob/master/OpenStreetMapViewer/src/main/java/org/osmdroid/samplefragments/tileproviders/SampleOfflineOnly.java
+ */
+
 public class MapViewActivity extends Activity {
    MapView map = null;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,56 +66,87 @@ public class MapViewActivity extends Activity {
         //inflate and create the map
         setContentView(R.layout.map_view);
 
-        final Context applicationContext = getApplicationContext();
-        final IRegisterReceiver registerReceiver = new SimpleRegisterReceiver(applicationContext);
-        final ITileSource tileSource = new XYTileSource(Environment.getExternalStorageState()+"/osmdroid/Bamberg.sqlite", 2, 17, 256, ".PNG", new String[] {});
-
-
-        final TileWriter tileWriter = new TileWriter();
-        final MapTileFilesystemProvider fileSystemProvider = new MapTileFilesystemProvider(
-                registerReceiver, tileSource);
-
-        File pFile = new File("C:\\Users\\melanie_vogel\\android-studio-workspace\\osmdroid\\osmdroid-android\\src\\main\\java\\org\\osmdroid\\tileprovider\\modules\\SqliteArchiveTileWriter");
-
-        File f = new File(Environment.getExternalStorageDirectory()+"/osmdroid/");
-
-        File[] flist = f.listFiles();
-
-
-        GEMFFileArchive gemfFileArchive = null; // Requires try/catch
-        try {
-            gemfFileArchive = GEMFFileArchive.getGEMFFileArchive(pFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        MapTileFileArchiveProvider fileArchiveProvider = new MapTileFileArchiveProvider(
-                registerReceiver, tileSource, new IArchiveFile[] { gemfFileArchive });
-
-        final MapTileProviderArray tileProviderArray = new MapTileProviderArray(
-                tileSource, registerReceiver, new MapTileModuleProviderBase[] {
-                fileSystemProvider, fileArchiveProvider });
-
-
 
         map = findViewById(R.id.map);
         map.setUseDataConnection(false);
+
+        File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/osmdroid/");
+        if (f.exists()) {
+
+            File[] list = f.listFiles();
+            if (list != null) {
+                for (int i = 0; i < list.length; i++) {
+                    if (list[i].isDirectory()) {
+                        continue;
+                    }
+                    String name = list[i].getName().toLowerCase();
+                    if (!name.contains(".")) {
+                        continue; //skip files without an extension
+                    }
+                    name = name.substring(name.lastIndexOf(".") + 1);
+                    if (name.length() == 0) {
+                        continue;
+                    }
+                    if (ArchiveFileFactory.isFileExtensionRegistered(name)) {
+                        try {
+
+                            //ok found a file we support and have a driver for the format, for this demo, we'll just use the first one
+
+                            //create the offline tile provider, it will only do offline file archives
+                            //again using the first file
+                            OfflineTileProvider tileProvider = null;
+                            try {
+                                tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(ctx),
+                                        new File[]{list[i]});
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            //tell osmdroid to use that provider instead of the default rig which is (asserts, cache, files/archives, online
+                            map.setTileProvider(tileProvider);
+
+                            //this bit enables us to find out what tiles sources are available. note, that this action may take some time to run
+                            //and should be ran asynchronously. we've put it inline for simplicity
+
+                            String source = "";
+                            IArchiveFile[] archives = tileProvider.getArchives();
+                            if (archives.length > 0) {
+                                //cheating a bit here, get the first archive file and ask for the tile sources names it contains
+                                Set<String> tileSources = archives[0].getTileSources();
+                                //presumably, this would be a great place to tell your users which tiles sources are available
+                                if (!tileSources.isEmpty()) {
+                                    //ok good, we found at least one tile source, create a basic file based tile source using that name
+                                    //and set it. If we don't set it, osmdroid will attempt to use the default source, which is "MAPNIK",
+                                    //which probably won't match your offline tile source, unless it's MAPNIK
+                                    source = tileSources.iterator().next();
+                                    this.map.setTileSource(FileBasedTileSource.getSource(source));
+                                } else {
+                                    this.map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+                                }
+
+                            } else {
+                                this.map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+                            }
+
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+
+
         IMapController mapController = map.getController();
         mapController.setZoom(15);
 
-        try {
-            OfflineTileProvider offlineProvider = new OfflineTileProvider(registerReceiver, new File[]{flist[0]} );
-            map.setTileProvider(offlineProvider);
-            map.setTileSource(new XYTileSource(Environment.getExternalStorageState()+"/osmdroid/Bamberg.sqlite", 2, 17, 256, ".PNG", new String[] {}));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
 
         // map.setBuiltInZoomControls(true);
         //map.setMultiTouchControls(true);
         mapController.setZoom((int) 17);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         @SuppressLint("MissingPermission")
         GeoPoint startPoint = new GeoPoint(locationManager.getLastKnownLocation("gps").getLatitude(), locationManager.getLastKnownLocation("gps").getLongitude());
         mapController.setCenter(startPoint);
