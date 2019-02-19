@@ -12,7 +12,11 @@ import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.IRegisterReceiver;
+import org.osmdroid.tileprovider.MapTileProviderArray;
+import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
@@ -25,9 +29,14 @@ import static org.osmdroid.views.overlay.gridlines.LatLonGridlineOverlay.fontSiz
 
 //import org.osmdroid.config.Configuration;
 
-public class MapViewActivity extends Activity {
-    MapView map = null;
+/*
+Offline map implemenation adopted from:
+https://github.com/osmdroid/osmdroid/blob/master/OpenStreetMapViewer/src/main/java/org/osmdroid/samplefragments/tileproviders/SampleOfflineOnly.java
+ */
 
+public class MapViewActivity extends Activity {
+   MapView map = null;
+    private MapTileProviderArray mapProvider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,16 +62,57 @@ public class MapViewActivity extends Activity {
 
         //inflate and create the map
         setContentView(R.layout.map_view);
-
         map = findViewById(R.id.map);
+        String[] urls = {};
+       // map.setTileSource(new XYTileSource(Environment.getExternalStorageDirectory() + "osm/droid/OpenStreetMap Hikebikemap.de", 2, 17, 256, ".PNG", urls));
+
+        IRegisterReceiver registerReceiver = new SimpleRegisterReceiver(ctx);
+/*
+        String[] urls = {};
+        //XYTileSource source3 = new XYTileSource(Environment.getExternalStorageDirectory() + "/osmdroid/u/tiles/tiles.sqlite", 2, 17, 256, ".PNG", urls);
+        XYTileSource source3 = new XYTileSource("OpenStreetMap Hikebikemap.de", 2, 17, 256, ".PNG", urls);
+
+        IArchiveFile[] archives2 = { ArchiveFileFactory.getArchiveFile(new File(Environment.getExternalStorageDirectory() + "/osmdroid/u/tiles/tiles.sqlite"))};
+
+        MapTileModuleProviderBase moduleProvider = new MapTileFileArchiveProvider(registerReceiver,source3,archives2);
+        this.mapProvider = new MapTileProviderArray(source3, null, new MapTileModuleProviderBase[] { moduleProvider });
+
+        this.map.setTileSource(FileBasedTileSource.getSource(String.valueOf(source3)));
+*/
+/*
+        String source2 = "";
+        File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/osmdroid/");
+        File[] fk = f.listFiles();
+        try {
+            OfflineTileProvider offlineTileProvider = new OfflineTileProvider(registerReceiver, new File[]{fk[0]});
+            IArchiveFile[] archives = offlineTileProvider.getArchives();
+            Set<String> tileSources = archives[0].getTileSources();
+            source2 = tileSources.iterator().next();
+            this.map.setTileSource(FileBasedTileSource.getSource(source2));
+
+            map.setTileProvider(offlineTileProvider);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+*/
+        map.setTileSource(new XYTileSource("OSM", 2, 17, 256, ".PNG", urls));
+
+        MapTileProviderBasic mapTileProviderBasic = new MapTileProviderBasic(ctx);
+        map.setTileProvider(mapTileProviderBasic);
+
         map.setUseDataConnection(false);
+        mapTileProviderBasic.setUseDataConnection(false);
+
         IMapController mapController = map.getController();
         mapController.setZoom(15);
-        map.setTileSource(new XYTileSource(Environment.getExternalStorageState()+"/osmdroid/Bamberg.sqlite", 2, 17, 256, ".PNG", new String[] {}));
-       // map.setBuiltInZoomControls(true);
-        //map.setMultiTouchControls(true);
+
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
         mapController.setZoom((int) 17);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         @SuppressLint("MissingPermission")
         GeoPoint startPoint = new GeoPoint(locationManager.getLastKnownLocation("gps").getLatitude(), locationManager.getLastKnownLocation("gps").getLongitude());
         mapController.setCenter(startPoint);
