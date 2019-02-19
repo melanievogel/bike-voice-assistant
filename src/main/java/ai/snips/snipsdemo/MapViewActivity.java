@@ -51,7 +51,6 @@ public class MapViewActivity extends Activity {
             }
         //handle permissions first, before map is created. not depicted here
 
-        //load/initialize the osmdroid configuration, this can be done 
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         //setting this before the layout is inflated is a good idea
@@ -64,19 +63,16 @@ public class MapViewActivity extends Activity {
         setContentView(R.layout.map_view);
         map = findViewById(R.id.map);
         String[] urls = {};
-       // map.setTileSource(new XYTileSource(Environment.getExternalStorageDirectory() + "osm/droid/OpenStreetMap Hikebikemap.de", 2, 17, 256, ".PNG", urls));
+        // map.setTileSource(new XYTileSource(Environment.getExternalStorageDirectory() + "osm/droid/OpenStreetMap Hikebikemap.de", 2, 17, 256, ".PNG", urls));
 
         IRegisterReceiver registerReceiver = new SimpleRegisterReceiver(ctx);
 /*
         String[] urls = {};
         //XYTileSource source3 = new XYTileSource(Environment.getExternalStorageDirectory() + "/osmdroid/u/tiles/tiles.sqlite", 2, 17, 256, ".PNG", urls);
         XYTileSource source3 = new XYTileSource("OpenStreetMap Hikebikemap.de", 2, 17, 256, ".PNG", urls);
-
         IArchiveFile[] archives2 = { ArchiveFileFactory.getArchiveFile(new File(Environment.getExternalStorageDirectory() + "/osmdroid/u/tiles/tiles.sqlite"))};
-
         MapTileModuleProviderBase moduleProvider = new MapTileFileArchiveProvider(registerReceiver,source3,archives2);
         this.mapProvider = new MapTileProviderArray(source3, null, new MapTileModuleProviderBase[] { moduleProvider });
-
         this.map.setTileSource(FileBasedTileSource.getSource(String.valueOf(source3)));
 */
 /*
@@ -89,10 +85,7 @@ public class MapViewActivity extends Activity {
             Set<String> tileSources = archives[0].getTileSources();
             source2 = tileSources.iterator().next();
             this.map.setTileSource(FileBasedTileSource.getSource(source2));
-
             map.setTileProvider(offlineTileProvider);
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
