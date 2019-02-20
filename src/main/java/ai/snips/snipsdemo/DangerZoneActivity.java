@@ -152,6 +152,8 @@ public class DangerZoneActivity extends AppCompatActivity {
                 ActionsUtil.write(getApplicationContext().getFilesDir() + "/zones.bike", new ArrayList<DangerZoneObject>(), itemt);
                 resultStringList.remove(itemt);
                 adapter.notifyDataSetChanged();
+                objList.clear();
+                objList.addAll(ActionsUtil.read(getApplicationContext().getFilesDir() + "/zones.bike", null));
                 /*
                 ArrayList<DangerZoneObject> list = new ArrayList<>();
                 write(getApplicationContext().getFilesDir() + "/zones.bike", list,item);

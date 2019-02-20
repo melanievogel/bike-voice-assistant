@@ -90,7 +90,7 @@ public class MapViewActivity extends Activity {
             e.printStackTrace();
         }
 */
-        map.setTileSource(new XYTileSource("OSM", 2, 17, 256, ".PNG", urls));
+        map.setTileSource(new XYTileSource("Bamberg.sqlite", 2, 13, 256, ".PNG", urls));
 
         MapTileProviderBasic mapTileProviderBasic = new MapTileProviderBasic(ctx);
         map.setTileProvider(mapTileProviderBasic);
