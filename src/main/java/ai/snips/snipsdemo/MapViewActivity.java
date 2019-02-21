@@ -90,10 +90,10 @@ public class MapViewActivity extends Activity {
             e.printStackTrace();
         }
 */
-        map.setTileSource(new XYTileSource("Bamberg.sqlite", 2, 13, 256, ".PNG", urls));
 
         MapTileProviderBasic mapTileProviderBasic = new MapTileProviderBasic(ctx);
         map.setTileProvider(mapTileProviderBasic);
+        map.setTileSource(new XYTileSource("OpenStreetMap Hikebikemap.de", 2, 17, 256, ".PNG", urls));
 
         map.setUseDataConnection(false);
         mapTileProviderBasic.setUseDataConnection(false);
@@ -127,7 +127,6 @@ public class MapViewActivity extends Activity {
             startMarker.setTitle(DZ.getName());
             map.getOverlays().add(startMarker);
         }
-
     }
 
     public void onResume() {
