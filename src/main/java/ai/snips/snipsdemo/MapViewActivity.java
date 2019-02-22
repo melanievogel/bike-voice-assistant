@@ -99,7 +99,7 @@ public class MapViewActivity extends Activity {
         mapTileProviderBasic.setUseDataConnection(false);
 
         IMapController mapController = map.getController();
-        mapController.setZoom(15);
+        mapController.setZoom(17);
 
         map.setBuiltInZoomControls(true);
         map.setMultiTouchControls(true);
