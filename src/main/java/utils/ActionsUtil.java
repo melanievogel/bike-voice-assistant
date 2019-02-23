@@ -1,5 +1,8 @@
 package utils;
 
+import android.location.Criteria;
+import android.location.LocationManager;
+
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -10,7 +13,14 @@ import ai.snips.snipsdemo.DangerZoneObject;
 
 public class ActionsUtil {
 
-
+    public static String getCriteria(LocationManager m) {
+        String p;
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
+        p = m.getBestProvider(criteria, true);
+        return p;
+    }
     public static ArrayList<DangerZoneObject> read(String file) {
         ArrayList<DangerZoneObject> result = new ArrayList<>();
         try {

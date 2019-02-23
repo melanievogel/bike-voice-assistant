@@ -3,7 +3,6 @@ package ai.snips.snipsdemo;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -47,6 +46,7 @@ import ai.snips.platform.SnipsPlatformClient.SnipsPlatformError;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
+import utils.ActionsUtil;
 
 import static ai.snips.hermes.InjectionKind.Add;
 import static ai.snips.snipsdemo.DangerZoneActivity.PI_RAD;
@@ -443,10 +443,7 @@ public class MainActivity extends AppCompatActivity {
         }
         // Provider mit genauer Auflösung
         // und mittlerem Energieverbrauch
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
-        p = m.getBestProvider(criteria, true);
+        p = ActionsUtil.getCriteria(m);
         // LocationListener-Objekt erzeugen
         l = new LocationListener() {
             @Override

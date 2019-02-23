@@ -165,15 +165,16 @@ public class DangerZoneActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        m.requestLocationUpdates(ActionsUtil.getCriteria(m), 0, (float) 0.5, l);    }
+
     @Override
     protected void onPause() {
         super.onPause();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                m.removeUpdates(l);
-            }
-        }
+        m.removeUpdates(l);
     }
 
     public void directToAddNewDangerZone(View view) {
@@ -215,10 +216,7 @@ public class DangerZoneActivity extends AppCompatActivity {
         }
         // Provider mit genauer Auflösung
         // und mittlerem Energieverbrauch
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
-        p = m.getBestProvider(criteria, true);
+        p = ActionsUtil.getCriteria(m);
         // LocationListener-Objekt erzeugen
         l = new LocationListener() {
             @Override
