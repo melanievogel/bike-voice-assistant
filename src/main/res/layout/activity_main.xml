@@ -54,6 +54,12 @@
             app:layout_constraintEnd_toEndOf="@+id/linearLayout"
             app:layout_constraintTop_toTopOf="@+id/linearLayout" />
 
+        <TextView
+            android:id="@+id/speed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Geschwindigkeit:" />
+
         <ScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"

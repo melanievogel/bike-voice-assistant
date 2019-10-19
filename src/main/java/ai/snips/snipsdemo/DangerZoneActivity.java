@@ -2,9 +2,13 @@ package ai.snips.snipsdemo;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -26,12 +30,7 @@ import java.util.ArrayList;
 
 import utils.ActionsUtil;
 
-import static java.lang.Math.acos;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-
-public class DangerZoneActivity extends AppCompatActivity {
-    static double PI_RAD = Math.PI / 180.0;
+public class DangerZoneActivity extends AppCompatActivity implements SensorEventListener {
     Button addButton;
     Button show_DZ;
     TextView gpsText;
@@ -39,11 +38,20 @@ public class DangerZoneActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter;
     ArrayList<String> resultStringList;
     ListView listView;
-    String p;
-    Double lati;
-    Double longi;
+    String p = "loading...";
+    int g = 0;
+    private float bearing = 0;
+    private double lati;
+    private double longi;
     private LocationManager m;
     private LocationListener l;
+    private SensorManager sensorManager;
+    private Sensor mMagnetic;
+    private Sensor mAccelero;
+    private float[] mGravity;
+    private float[] mGeomagnetic;
+    private int d = 0;
+    private float[] oBearings = {0f, 0f, 0f};
 
     @SuppressLint("MissingPermission")
     @Override
@@ -56,10 +64,13 @@ public class DangerZoneActivity extends AppCompatActivity {
         gpsText = findViewById(R.id.gpsdata);
         show_DZ = findViewById(R.id.show_dangerzones);
         listView = findViewById(R.id.listview);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mMagnetic = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        mAccelero = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         m = (LocationManager) getSystemService(LOCATION_SERVICE);
         doIt();
-        m.requestLocationUpdates(p, 0, (float) 0.5, l);
+        m.requestLocationUpdates(ActionsUtil.getCriteria(m), 0, (float) 0.5, l);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -143,9 +154,9 @@ public class DangerZoneActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
         switch (item.getItemId()) {
-            /*case R.id.action_daten_aktualisieren:
-                Toast.makeText(this, "Aktualisieren", Toast.LENGTH_SHORT).show();
-                return true;*/
+            case R.id.show_direction:
+                directPointToDirection(0);
+                return true;
             case R.id.action_daten_loeschen:
                 String itemt = resultStringList.get(position);
                 //objList.remove(itemt);
@@ -169,12 +180,16 @@ public class DangerZoneActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        m.requestLocationUpdates(ActionsUtil.getCriteria(m), 0, (float) 0.5, l);    }
+        m.requestLocationUpdates(ActionsUtil.getCriteria(m), 0, (float) 0.5, l);
+        sensorManager.registerListener(this, mMagnetic, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, mAccelero, SensorManager.SENSOR_DELAY_NORMAL);
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
         m.removeUpdates(l);
+        sensorManager.unregisterListener(this);
     }
 
     public void directToAddNewDangerZone(View view) {
@@ -188,14 +203,10 @@ public class DangerZoneActivity extends AppCompatActivity {
         intent.putExtra("objList", objList);
         startActivity(intent);
     }
-
-    public double greatCircleInKilometers(double lat1, double long1, double lat2, double long2) {
-        double phi1 = lat1 * PI_RAD;
-        double phi2 = lat2 * PI_RAD;
-        double lam1 = long1 * PI_RAD;
-        double lam2 = long2 * PI_RAD;
-
-        return 6371.01 * acos(sin(phi1) * sin(phi2) + cos(phi1) * cos(phi2) * cos(lam2 - lam1));
+    public void directPointToDirection(int position){
+        Intent intent = new Intent(DangerZoneActivity.this, PointToDirection.class);
+        intent.putExtra("item", objList.get(position));
+        startActivity(intent);
     }
 
     @Override
@@ -236,23 +247,68 @@ public class DangerZoneActivity extends AppCompatActivity {
 
             @Override
             public void onLocationChanged(Location location) {
-                lati = location.getLatitude();
-                longi = location.getLongitude();
-                gpsText.setText("Meine aktuellen Koordinaten:" + "\n" + "  Längengrad: " +
-                        longi.toString() + "\n" + "  Längengrad: " + lati.toString());
-               /* gpsText.append("\n" + "  Längengrad: " + longi.toString());
-                gpsText.append("\n" + "  Breitengrad: " + lati.toString());*/
-                resultStringList.clear();
-                for (DangerZoneObject dz : objList) {
-                    String name = dz.getName();
-                    Double longi2 = dz.getLongi();
-                    Double lati2 = dz.getLati();
-                    Double dist2 = greatCircleInKilometers(lati2, longi2, lati, longi);
-                    resultStringList.add(name + "\n" + "LG: " + longi2 + ", BG: " + lati2 + " " + "\n" + "Dist: " + Math.round(dist2) + " km");
-                }
-                adapter.notifyDataSetChanged();
+                updateData(location.getLongitude(), location.getLatitude());
             }
         };
+    }
+
+    private void updateData(double newLongi, double newLati) {
+
+        longi = newLongi;
+        lati = newLati;
+        gpsText.setText("Meine aktuellen Koordinaten:" + "\n" + "  Längengrad: " +
+                longi + "\n" + "  Breitengrad: " + lati);
+               /* gpsText.append("\n" + "  Längengrad: " + longi.toString());
+                gpsText.append("\n" + "  Breitengrad: " + lati.toString());*/
+        resultStringList.clear();
+        float[] results = new float[3];
+        for (DangerZoneObject dz : objList) {
+            String name = dz.getName();
+            Double longi2 = dz.getLongi();
+            Double lati2 = dz.getLati();
+            Location.distanceBetween(lati2, longi2, lati, longi, results);
+            Double dist2 = ((double) results[0]) / 1000f;
+            resultStringList.add(name + "\n" + "LG: " + longi2 + ", BG: " + lati2 + " " + "\n" + "Dist: " + Math.round(dist2) + " km" + "\nBearing: " + (results[1] + bearing + "°"));
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public final void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Do something here if sensor accuracy changes.
+    }
+
+    @Override
+    public final void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+            mGravity = event.values;
+        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+            mGeomagnetic = event.values;
+        if (mGravity != null && mGeomagnetic != null) {
+            float[] R = new float[9];
+            float[] I = new float[9];
+            boolean success = SensorManager.getRotationMatrix(R, I, mGravity,
+                    mGeomagnetic);
+            if (success) {
+                float[] orientation = new float[3];
+                SensorManager.getOrientation(R, orientation);
+                SensorManager.getOrientation(R, orientation);
+                float azimuth = Math.round(Math.toDegrees(orientation[0]));
+                oBearings[d] = azimuth;
+                d++;
+                if (d > oBearings.length - 1) {
+                    if (g == 5) {
+                        float temp = 0;
+                        for (int x = oBearings.length - 1; x >= 0; x--)
+                            temp += oBearings[x];
+                        bearing = temp / oBearings.length;
+                    }
+                    d = 0;
+
+                }
+                updateData(longi, lati);
+            }
+        }
     }
 
     public class MyUndoListener implements View.OnClickListener {
@@ -263,4 +319,5 @@ public class DangerZoneActivity extends AppCompatActivity {
             // Code to undo the user's last action
         }
     }
+
 }

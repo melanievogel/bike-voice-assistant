@@ -1,6 +1,7 @@
 package utils;
 
 import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationManager;
 
 import java.io.BufferedReader;
@@ -11,7 +12,23 @@ import java.util.ArrayList;
 
 import ai.snips.snipsdemo.DangerZoneObject;
 
+import static java.lang.Math.acos;
+import static java.lang.Math.atan;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 public class ActionsUtil {
+
+    public static double greatCircleInKilometers(double lat1, double long1, double lat2, double long2) {
+        double PI_RAD = Math.PI / 180.0;
+        double phi1 = lat1 * PI_RAD;
+        double phi2 = lat2 * PI_RAD;
+        double lam1 = long1 * PI_RAD;
+        double lam2 = long2 * PI_RAD;
+
+        return 6371.01 * acos(sin(phi1) * sin(phi2) + cos(phi1) * cos(phi2) * cos(lam2 - lam1));
+    }
+
 
     public static String getCriteria(LocationManager m) {
         String p;

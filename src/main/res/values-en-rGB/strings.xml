@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Demo Voice Assistant</string>
+    <string name="add">add new danger</string>
+    <string name="loading">loading...</string>
+    <string name="newroute">start tour</string>
+    <string name="savedz">save</string>
+    <string name="startVoice">start Voiceassistent</string>
+    <string name="stopVoice">stop Voiceassistent</string>
+    <string name="todz">My Dangerzones</string>
+    <string name="direction">direction</string>
+    <string name="delete">delete</string>
+</resources>

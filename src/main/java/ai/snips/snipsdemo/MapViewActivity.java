@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
@@ -93,7 +94,7 @@ public class MapViewActivity extends Activity {
 
         MapTileProviderBasic mapTileProviderBasic = new MapTileProviderBasic(ctx);
         map.setTileProvider(mapTileProviderBasic);
-        map.setTileSource(new XYTileSource("OpenStreetMap Hikebikemap.de", 2, 17, 256, ".PNG", urls));
+        map.setTileSource(new XYTileSource("OpenStreetMap Hikebikemap.de", 0, 17, 256, ".PNG", urls));
 
         map.setUseDataConnection(false);
         mapTileProviderBasic.setUseDataConnection(false);
@@ -103,7 +104,7 @@ public class MapViewActivity extends Activity {
 
         map.setBuiltInZoomControls(true);
         map.setMultiTouchControls(true);
-        mapController.setZoom((int) 17);
+        mapController.setZoom(17);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         @SuppressLint("MissingPermission")

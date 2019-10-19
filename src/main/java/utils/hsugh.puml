@@ -1,0 +1,36 @@
+@startuml
+Start
+repeat
+if (direct) then (MainActivity)
+:get DangerZones from Storage;
+fork
+repeat
+:get users location;
+:check for DangerZones;
+repeat while(activity opened)
+fork again
+repeat
+if(on StartAssistant-Button()) then (true)
+:start speech assistant;
+endif
+repeat while(actvity opened)
+end fork
+:direct back to startActivity;
+elseif(direct) then(DangerZoneActivity)
+:get DangerZones from storage;
+repeat
+:get users location;
+:update DangerZones;
+repeat while(no Button pressed)
+if(direct) then (AddDangerZoneActivity)
+:on Save-Button();
+:save DangerZone;
+:direct to DangerZoneActivity;
+elseif(direct) then (MapViewActivity)
+:show Dangerzones on Map;
+else(nothing)
+endif
+endif
+repeat while(program opened)
+end
+@enduml

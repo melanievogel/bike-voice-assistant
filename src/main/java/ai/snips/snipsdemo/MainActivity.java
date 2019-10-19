@@ -19,9 +19,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -49,12 +51,9 @@ import kotlin.jvm.functions.Function1;
 import utils.ActionsUtil;
 
 import static ai.snips.hermes.InjectionKind.Add;
-import static ai.snips.snipsdemo.DangerZoneActivity.PI_RAD;
+import static android.location.Location.distanceBetween;
 import static android.media.MediaRecorder.AudioSource.MIC;
 import static android.speech.tts.TextToSpeech.QUEUE_FLUSH;
-import static java.lang.Math.acos;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import static java.util.Collections.singletonList;
 
 public class MainActivity extends AppCompatActivity {
@@ -65,18 +64,15 @@ public class MainActivity extends AppCompatActivity {
     private static final int FREQUENCY = 16_000;
     private static final int CHANNEL = AudioFormat.CHANNEL_IN_MONO;
     private static final int ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-
+    Location oLocation;
     private SnipsPlatformClient client;
-
     private AudioRecord recorder;
-
     private TextToSpeech mTTS;
     private volatile boolean continueStreaming = true;
     private LocationManager m;
     private LocationListener l;
-    private double lati;
-    private double longi;
     private String p;
+    private TextView speed;
    /* private void timer(){
         new Timer().schedule(new TimerTask() {
             public void run () {
@@ -96,14 +92,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
+        speed = findViewById(R.id.speed);
         ensurePermissions();
         if (!new File(getApplicationContext().getFilesDir() + "/zones.bike").exists()) {
             write(getApplicationContext().getFilesDir() + "/zones.bike", null);
         }
         m = (LocationManager) getSystemService(LOCATION_SERVICE);
         doIt();
-        m.requestLocationUpdates(p, 0, (float) 5, l);
+        m.requestLocationUpdates(p, 250, (float) 5, l);
         mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -125,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (ensurePermissions()) {
-                    final Button button = (Button) findViewById(R.id.start);
+                    final Button button = findViewById(R.id.start);
                     button.setEnabled(false);
                     button.setText(R.string.loading);
 
@@ -380,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
             startStreaming();
             client.resume();
         }
-        m.requestLocationUpdates(p, 0, (float) 5, l);
+        m.requestLocationUpdates(p, 0, (float) 0, l);
 
     }
 
@@ -463,27 +461,31 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLocationChanged(Location location) {
-                String warning;
-                Log.d(TAG, "Loc changed");
-                lati = location.getLatitude();
-                longi = location.getLongitude();
-                warning = CheckForDz();
-                if (!warning.equals("No there isn't")) {
-                    mTTS.speak(warning, QUEUE_FLUSH, null, null);
+                Runnable runnable = new myThread();
+                Thread thread = new Thread(runnable);
+                thread.start();
+                if (oLocation != null) {
+                    long time = location.getTime() - oLocation.getTime();
+                    speed.setText(location.distanceTo(oLocation) * 1000 * 60 * 60 / time +"\n"+location.getLatitude()+"\n"+location.getLongitude());
+                    if (time==0){
+                        speed.setText("time 0");
+                    }
                 }
+                oLocation = new Location(location);
+
 
             }
         };
     }
 
-    public double greatCircleInKilometers(double lat1, double long1, double lat2, double long2) {
+ /*   public double greatCircleInKilometers(double lat1, double long1, double lat2, double long2) {
         double phi1 = lat1 * PI_RAD;
         double phi2 = lat2 * PI_RAD;
         double lam1 = long1 * PI_RAD;
         double lam2 = long2 * PI_RAD;
 
         return 6371.01 * acos(sin(phi1) * sin(phi2) + cos(phi1) * cos(phi2) * cos(lam2 - lam1));
-    }
+    }*/
 
     public String CheckForDz() {
         String answer = "There is a ";
@@ -494,9 +496,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, String.valueOf(arrayList.size()));
         }
         for (DangerZoneObject dz : arrayList) {
-            double distance = greatCircleInKilometers(lati, longi, dz.getLati(), dz.getLongi()) * 1000;
+            float[] results = new float[1];
+           // double distance = Location.distanceBetween(oLocation.getLatitude(), oLocation.getLongitude(), dz.getLati(), dz.getLongi(), results[]);
+            distanceBetween(oLocation.getLatitude(), oLocation.getLongitude(), dz.getLati(), dz.getLongi(), results);
+            double distance = results [0];
             Log.d(TAG, String.valueOf(distance));
-            if (200.00 > distance) {
+            if (100.00 > distance) {
                 if (!answer.equals("There is a ")) {
                     answer = answer + " and a ";
                 }
@@ -510,6 +515,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return answer;
+    }
+    public class myThread implements Runnable {
+
+
+        @Override
+        public void run() {
+            String warning;
+            warning = CheckForDz();
+            //failure
+            if (!warning.equals("No there isn't") && mTTS.isSpeaking() == false) {
+                mTTS.speak(warning, QUEUE_FLUSH, null, null);
+            }
+        }
     }
 
 }

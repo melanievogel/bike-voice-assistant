@@ -56,7 +56,7 @@
             android:layout_height="51dp"
             android:layout_marginTop="20dp"
             android:paddingLeft="2dp"
-            android:text="Meine Gefahrenzonen"
+            android:text="@string/meine_gefahrenzonen"
             android:textAlignment="textStart"
             android:textSize="24sp"
             tools:layout_editor_absoluteX="11dp"
